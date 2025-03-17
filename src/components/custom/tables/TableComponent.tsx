@@ -1,0 +1,120 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import * as React from "react";
+import Image from "next/image";
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+interface Player {
+  player_name: string;
+  player_id: number;
+  curr_ga: number;
+  curr_goals: number;
+  curr_assists: number;
+  curr_gp: number;
+  age: number;
+  team_name: string;
+  nation1: string;
+  nation2?: string | null;
+  nation1_url: string;
+  nation2_url?: string | null;
+}
+
+//const api_url = "http://192.168.1.108:90/mostga/topleagues?max_age=38";
+const api_url =
+  "https://a0d1-142-188-229-219.ngrok-free.app/v1/players/mostga/topleagues";
+
+export function TableComponent() {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPlayers() {
+      try {
+        const response = await fetch(api_url, {
+          headers: {
+            "ngrok-skip-browser-warning": "true", // Add this header
+          },
+        });
+
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Check if the response is JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          throw new Error(`Expected JSON but got: ${text}`);
+        }
+
+        const data = await response.json();
+        setPlayers(data.data);
+      } catch (error) {
+        console.error("Error fetching player data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPlayers();
+  }, []);
+
+  return (
+    <Table>
+      <TableCaption>Top G/A All Competitions</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Player Name</TableHead>
+          <TableHead>G/A</TableHead>
+          <TableHead>G</TableHead>
+          <TableHead>A</TableHead>
+          <TableHead>GP</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {players.map((player) => (
+          <TableRow key={player.player_id}>
+            <TableCell className="font-small">
+              <div className="flex flex-col gap-1">
+                <div>
+                  {player.player_name} ({player.age})
+                </div>
+                <div>{player.team_name}</div>
+                <div className="flex gap-1">
+                  <Image
+                    src={player.nation1_url}
+                    alt={player.nation1}
+                    width={28}
+                    height={15}
+                  />
+                  {player.nation2 && player.nation2_url && (
+                    <Image
+                      src={player.nation2_url}
+                      alt={player.nation2}
+                      width={28}
+                      height={15}
+                    />
+                  )}
+                </div>
+              </div>
+            </TableCell>
+            <TableCell>{player.curr_ga}</TableCell>
+            <TableCell>{player.curr_goals}</TableCell>
+            <TableCell>{player.curr_assists}</TableCell>
+            <TableCell>{player.curr_gp}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}

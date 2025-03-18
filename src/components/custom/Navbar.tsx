@@ -19,14 +19,14 @@ export default function Navbar() {
         className="flex items-center gap-2 hover:underline hover:underline-offset-4"
       >
         <ChartSVG />
-        Players
+        Stats
       </Link>
       <Link
-        href="/teams"
+        href="/comps"
         className="flex items-center gap-2 hover:underline hover:underline-offset-4"
       >
         <GlobeSVG />
-        Teams
+        Comps
       </Link>
       <ModeToggle />
     </div>

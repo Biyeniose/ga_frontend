@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import * as React from "react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 import {
   Table,
@@ -23,17 +25,21 @@ interface Player {
   curr_gp: number;
   age: number;
   team_name: string;
+  curr_team_id: number;
   nation1: string;
   nation2?: string | null;
   nation1_url: string;
   nation2_url?: string | null;
 }
 
-//const api_url = "http://192.168.1.108:90/mostga/topleagues?max_age=38";
-const api_url =
-  "https://a0d1-142-188-229-219.ngrok-free.app/v1/players/mostga/topleagues";
+interface MyComponentProps {
+  api_url: string;
+}
 
-export function TableComponent() {
+//const api_url = "http://192.168.1.108:90/mostga/topleagues?max_age=38";
+//const api_url ="https://a0d1-142-188-229-219.ngrok-free.app/v1/players/most_ga/topleagues";
+
+const TableComponent: React.FC<MyComponentProps> = ({ api_url }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +73,14 @@ export function TableComponent() {
       }
     }
     fetchPlayers();
-  }, []);
+  }, [api_url]);
+
+  if (loading)
+    return (
+      <>
+        <Skeleton className="w-[150px] h-[50px] rounded-full" />
+      </>
+    );
 
   return (
     <Table>
@@ -87,9 +100,20 @@ export function TableComponent() {
             <TableCell className="font-small">
               <div className="flex flex-col gap-1">
                 <div>
-                  {player.player_name} ({player.age})
+                  <Link
+                    href={`/players/${player.player_id}`}
+                    className="hover:underline hover:underline-offset-4"
+                  >
+                    {player.player_name}
+                  </Link>{" "}
+                  ({player.age})
                 </div>
-                <div>{player.team_name}</div>
+                <Link
+                  href={`/teams/${player.curr_team_id}`}
+                  className="hover:underline hover:underline-offset-4"
+                >
+                  {player.team_name}
+                </Link>
                 <div className="flex gap-1">
                   <Image
                     src={player.nation1_url}
@@ -117,4 +141,6 @@ export function TableComponent() {
       </TableBody>
     </Table>
   );
-}
+};
+
+export default TableComponent;

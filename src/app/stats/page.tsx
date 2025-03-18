@@ -10,7 +10,9 @@ export default function StatsPage() {
         <h1 className="text-3xl font-bold">Stats Page</h1>
         <h3 className="text-3xl font-bold">Top U-23 G/A</h3>
 
-        <TableComponent api_url={url} />
+        <div className="font-[family-name:var(--font-geist-mono)]">
+          <TableComponent api_url={url} />
+        </div>
       </div>
     </div>
   );

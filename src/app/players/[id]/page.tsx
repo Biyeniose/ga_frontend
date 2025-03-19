@@ -44,10 +44,12 @@ export default async function Page({ params }: { params: { id: string } }) {
 
     return (
       <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-sans)]">
-        <h1>{playerData.player_name}</h1>
+        <h1 className="text-3xl font-bold my-4">{playerData.player_name}</h1>
         <p>Player ID: {playerData.player_id}</p>
         <p>Age: {playerData.age}</p>
+        <p>DOB: {playerData.dob}</p>
         <p>Position: {playerData.position}</p>
+
         <p>
           Market Value:{" "}
           {new Intl.NumberFormat("local", {

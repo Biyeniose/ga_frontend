@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react"; // Added useRef
+import { useEffect, useState, useRef } from "react";
 import * as React from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+
 import {
   Table,
   TableBody,
@@ -12,32 +14,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
 
-interface Player {
-  player_name: string;
-  player_id: number;
-  curr_ga: number;
-  curr_goals: number;
-  curr_assists: number;
-  curr_gp: number;
-  age: number;
+interface Team {
   team_name: string;
-  curr_team_id: number;
-  club_url: string;
+  team_id: number;
+  curr_league_rank: number;
+  curr_league_points: number;
+  curr_league_gp: number;
+  curr_league_gd: number;
+  logo_url: string;
 }
 
 interface MyComponentProps {
   api_url: string;
 }
 
-const LeagueTopGA: React.FC<MyComponentProps> = ({ api_url }) => {
-  const [players, setPlayers] = useState<Player[]>([]);
+const LeagueRanking: React.FC<MyComponentProps> = ({ api_url }) => {
+  const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const isFetchCalled = useRef(false); // Added useRef
 
   useEffect(() => {
-    async function fetchPlayers() {
+    async function fetchTeams() {
       if (isFetchCalled.current) {
         return; // Prevent double fetch
       }
@@ -61,14 +59,14 @@ const LeagueTopGA: React.FC<MyComponentProps> = ({ api_url }) => {
         }
 
         const data = await response.json();
-        setPlayers(data.data);
+        setTeams(data.data);
       } catch (error) {
         console.error("Error fetching player data:", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchPlayers();
+    fetchTeams();
   }, [api_url]);
 
   if (loading)
@@ -82,42 +80,43 @@ const LeagueTopGA: React.FC<MyComponentProps> = ({ api_url }) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Player Name</TableHead>
-          <TableHead>G/A</TableHead>
-          <TableHead>G</TableHead>
-          <TableHead>A</TableHead>
+          <TableHead>Rank</TableHead>
+          <TableHead>Team</TableHead>
+          <TableHead>P</TableHead>
+          <TableHead>GD</TableHead>
           <TableHead>GP</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {players.map((player) => (
-          <TableRow key={player.player_id}>
+        {teams.map((team) => (
+          <TableRow key={team.team_id}>
+            <TableCell>{team.curr_league_rank}</TableCell>
+
             <TableCell className="font-small">
-              <div className="flex flex-col gap-1">
+              <div className="flex gap-1">
                 <div>
                   <Link
-                    href={`/players/${player.player_id}`}
+                    href={`/teams/${team.team_id}`}
                     className="hover:underline hover:underline-offset-4"
                   >
-                    {player.player_name}
-                  </Link>{" "}
-                  ({player.age})
+                    {team.team_name}
+                  </Link>
                 </div>
 
                 <div className="flex gap-1">
                   <Image
-                    alt={player.player_name}
-                    src={player.club_url}
-                    width={30}
-                    height={30}
+                    src={team.logo_url}
+                    alt={team.team_name}
+                    width={28}
+                    height={15}
                   />
                 </div>
               </div>
             </TableCell>
-            <TableCell>{player.curr_ga}</TableCell>
-            <TableCell>{player.curr_goals}</TableCell>
-            <TableCell>{player.curr_assists}</TableCell>
-            <TableCell>{player.curr_gp}</TableCell>
+
+            <TableCell>{team.curr_league_points}</TableCell>
+            <TableCell>{team.curr_league_gd}</TableCell>
+            <TableCell>{team.curr_league_gp}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -125,4 +124,4 @@ const LeagueTopGA: React.FC<MyComponentProps> = ({ api_url }) => {
   );
 };
 
-export default LeagueTopGA;
+export default LeagueRanking;

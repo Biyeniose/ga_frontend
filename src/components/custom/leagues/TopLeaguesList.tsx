@@ -89,7 +89,7 @@ export function TopLeaguesList() {
                       height={15}
                     />
                     <Link
-                      href="/"
+                      href={`/leagues/${league.league_id}`}
                       className="inline-flex items-center justify-center rounded-md text-xs px-1 py-1 border border-input bg-background hover:bg-accent hover:text-accent-foreground"
                     >
                       <ChevronRight className="h-4 w-7" />

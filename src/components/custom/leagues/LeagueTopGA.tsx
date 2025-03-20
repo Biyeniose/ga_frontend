@@ -73,16 +73,18 @@ const LeagueTopGA: React.FC<MyComponentProps> = ({ api_url }) => {
 
   if (loading)
     return (
-      <>
-        <Skeleton className="w-[150px] h-[50px] rounded-full" />
-      </>
+      <div className="flex justify-center items-center">
+        {" "}
+        {/* Center horizontally & vertically */}
+        <Skeleton className="w-[150px] h-[30px] rounded-full" />
+      </div>
     );
 
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Player Name</TableHead>
+          <TableHead>Player</TableHead>
           <TableHead>G/A</TableHead>
           <TableHead>G</TableHead>
           <TableHead>A</TableHead>

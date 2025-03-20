@@ -23,7 +23,7 @@ interface TopLeagues {
 }
 
 const api_url =
-  "https://a0d1-142-188-229-219.ngrok-free.app/v1/leagues/domestic";
+  "https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/domestic";
 
 export function TopLeaguesList() {
   const [leagues, setLeagues] = useState<TopLeagues[]>([]);
@@ -98,9 +98,10 @@ export function TopLeaguesList() {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
+                <h1 className="flex justify-center">Highest G+A</h1>
                 <LeagueTopGA
                   key={league.league_id}
-                  api_url={`https://a0d1-142-188-229-219.ngrok-free.app/v1/players/most_ga/${league.league_id}`}
+                  api_url={`https://c1ac-142-188-229-219.ngrok-free.app/v1/players/most_ga/${league.league_id}`}
                 />
               </AccordionContent>
             </AccordionItem>

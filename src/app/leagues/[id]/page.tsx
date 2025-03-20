@@ -13,8 +13,8 @@ interface ApiResponse {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;
-  //const url =  `https://a0d1-142-188-229-219.ngrok-free.app/v1/leagues/${id}/rank`;
-  const url = `https://a0d1-142-188-229-219.ngrok-free.app/v1/leagues/${id}`;
+  //const url =  `https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/${id}/rank`;
+  const url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/${id}`;
 
   try {
     const response = await fetch(url, {
@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         <p>Country: {leagueData.country}</p>
         <div className="font-[family-name:var(--font-geist-mono)]">
           <LeagueRanking
-            api_url={`https://a0d1-142-188-229-219.ngrok-free.app/v1/leagues/${leagueData.league_id}/rank`}
+            api_url={`https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/${leagueData.league_id}/rank`}
           />
         </div>
       </div>

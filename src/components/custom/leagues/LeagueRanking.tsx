@@ -80,7 +80,7 @@ const LeagueRanking: React.FC<MyComponentProps> = ({ api_url }) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Rank</TableHead>
+          <TableHead>#</TableHead>
           <TableHead>Team</TableHead>
           <TableHead>P</TableHead>
           <TableHead>GD</TableHead>
@@ -93,7 +93,7 @@ const LeagueRanking: React.FC<MyComponentProps> = ({ api_url }) => {
             <TableCell>{team.curr_league_rank}</TableCell>
 
             <TableCell className="font-small">
-              <div className="flex gap-1">
+              <div className="flex gap-1 items-center">
                 <div>
                   <Link
                     href={`/teams/${team.team_id}`}

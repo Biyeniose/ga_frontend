@@ -37,7 +37,7 @@ interface MyComponentProps {
 }
 
 //const api_url = "http://192.168.1.108:90/mostga/topleagues?max_age=38";
-//const api_url ="https://a0d1-142-188-229-219.ngrok-free.app/v1/players/most_ga/topleagues";
+//const api_url ="https://c1ac-142-188-229-219.ngrok-free.app/v1/players/most_ga/topleagues";
 
 const TableComponent: React.FC<MyComponentProps> = ({ api_url }) => {
   const [players, setPlayers] = useState<Player[]>([]);

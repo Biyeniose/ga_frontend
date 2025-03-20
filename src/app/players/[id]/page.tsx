@@ -25,7 +25,7 @@ export interface PlayerPage {
 }
 
 interface ApiResponse {
-  data: PlayerPage | null; // Data is a single PlayerPage object or null
+  data: PlayerPage | null;
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -44,10 +44,9 @@ export default async function Page({ params }: { params: { id: string } }) {
     }
 
     const apiResponse: ApiResponse = await response.json();
-    const playerData = apiResponse.data; // Access data directly
+    const playerData = apiResponse.data;
 
     if (!playerData) {
-      console.log(apiResponse.data);
       return (
         <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-mono)] ">
           Player not found.
@@ -60,24 +59,26 @@ export default async function Page({ params }: { params: { id: string } }) {
         <h1 className="text-3xl font-bold my-4 p-3">
           {playerData.player_name}
           <div className="flex space-x-2">
-            <Image
-              src={playerData.nation1_url}
-              alt={playerData.nation1}
-              width={40}
-              height={35}
-            />
+            {playerData.nation1_url ? (
+              <Image
+                src={playerData.nation1_url}
+                alt={playerData.nation1}
+                width={40}
+                height={35}
+              />
+            ) : null}
 
-            {playerData.nation2 && playerData.nation2_url && (
+            {playerData.nation2 && playerData.nation2_url ? (
               <Image
                 src={playerData.nation2_url}
                 alt={playerData.nation2}
                 width={40}
                 height={35}
               />
-            )}
+            ) : null}
           </div>
           <p className="text-base font-normal">
-            {new Intl.NumberFormat("local", {
+            {new Intl.NumberFormat("en-GB", {
               style: "currency",
               currency: "EUR",
             }).format(playerData.market_value)}
@@ -85,6 +86,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <p className="text-base font-normal">
             {playerData.age} yo ({playerData.dob})
           </p>
+          <p className="text-base font-normal">{playerData.position}</p>
         </h1>
 
         <PlayerCard playerDetails={playerData} />
@@ -92,6 +94,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     );
   } catch (error) {
     console.error(error);
-    return <div>Error loading player data.</div>;
+    return <div className="text-red-500">Error loading player data.</div>;
   }
 }

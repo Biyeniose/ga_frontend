@@ -31,16 +31,17 @@ function PlayerCard({ playerDetails }: PlayerCardProps) {
             {""}
           </div>
 
-          <p className="text-red-500">
+          <p className="text-red-500 mb-1">
             {playerDetails.date_joined} to {playerDetails.contract_end}
             {""}
           </p>
-          <p className="my-2">
-            GP = {playerDetails.curr_gp}
-            <br />
-            G/A = {playerDetails.curr_ga} ({playerDetails.curr_goals}G{" "}
-            {playerDetails.curr_assists}A)
-          </p>
+          <div className="flex flex-col">
+            <p className="my-1">GP = {playerDetails.curr_gp}</p>
+            <p className="my-1">
+              G/A = {playerDetails.curr_ga} ({playerDetails.curr_goals}G{" "}
+              {playerDetails.curr_assists}A)
+            </p>
+          </div>
         </CardTitle>
       </CardHeader>
     </Card>

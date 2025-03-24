@@ -22,6 +22,9 @@ export interface PlayerPage {
   curr_goals: number;
   curr_assists: number;
   curr_gp: number;
+  curr_subon: number;
+  curr_suboff: number;
+  foot: string;
 }
 
 interface ApiResponse {
@@ -55,7 +58,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     }
 
     return (
-      <div className="min-h-screen flex flex-col md:flex-row p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-mono)] ">
+      <div className="min-h-screen flex flex-col items-center p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-mono)] ">
         <h1 className="text-3xl font-bold my-4 p-3">
           {playerData.player_name}
           <div className="flex space-x-2">
@@ -67,7 +70,6 @@ export default async function Page({ params }: { params: { id: string } }) {
                 height={35}
               />
             ) : null}
-
             {playerData.nation2 && playerData.nation2_url ? (
               <Image
                 src={playerData.nation2_url}
@@ -86,7 +88,9 @@ export default async function Page({ params }: { params: { id: string } }) {
           <p className="text-base font-normal">
             {playerData.age} yo ({playerData.dob})
           </p>
-          <p className="text-base font-normal">{playerData.position}</p>
+          <p className="text-base font-normal">
+            {playerData.position} - {playerData.foot}
+          </p>
         </h1>
 
         <PlayerCard playerDetails={playerData} />

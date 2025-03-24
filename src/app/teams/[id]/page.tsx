@@ -1,6 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import MostGA from "@/components/custom/teams/MostGA";
+import MostMin from "@/components/custom/teams/MostMin";
+import TopNations from "@/components/custom/teams/TopNations";
 
 export interface TeamPage {
   team_name: string;
@@ -11,7 +11,7 @@ export interface TeamPage {
 }
 
 interface ApiResponse {
-  data: TeamPage | null; // Data is a single PlayerPage object or null
+  data: TeamPage | null;
 }
 
 export default async function TeamsPage({
@@ -21,6 +21,9 @@ export default async function TeamsPage({
 }) {
   const { id } = await params;
   const url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}`;
+  const url_ga = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}/most_ga`;
+  const url_min = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}/most_min`;
+  const url_nations = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}/top_nations`;
 
   try {
     const response = await fetch(url, {
@@ -34,7 +37,7 @@ export default async function TeamsPage({
     }
 
     const apiResponse: ApiResponse = await response.json();
-    const teamData = apiResponse.data; // Access data directly
+    const teamData = apiResponse.data;
 
     if (!teamData) {
       console.log(apiResponse.data);
@@ -46,25 +49,11 @@ export default async function TeamsPage({
     }
 
     return (
-      <div className="min-h-screen flex flex-col md:flex-row p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-mono)] ">
-        <h1 className="text-3xl font-bold my-4 p-3 flex flex-col items-center justify-center">
-          {teamData.team_name2}
-          <div className="flex space-x-2">
-            <Image
-              src={teamData.logo_url}
-              alt={teamData.team_name}
-              width={70}
-              height={70}
-            />
-          </div>
-        </h1>
-
-        <main className="flex items-center justify-center">
-          <Button asChild className="self-start" variant="destructive">
-            <Link href={`/teams/${teamData.team_id}/allplayers`}>
-              See All Players
-            </Link>
-          </Button>
+      <div className="min-h-screen flex flex-col md:flex-row p-8 pb-20 sm:p-20 px-8 pt-10 pb-14 font-[family-name:var(--font-geist-mono)] items-center justify-center">
+        <main className="flex flex-col md:flex-row items-start justify-center md:space-x-4 space-y-4">
+          <TopNations api_url={url_nations} />
+          <MostGA api_url={url_ga} />
+          <MostMin api_url={url_min} />
         </main>
       </div>
     );

@@ -5,6 +5,15 @@ import { PlayerPage } from "@/app/players/[id]/page";
 import Image from "next/image";
 import Link from "next/link";
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 interface PlayerCardProps {
   playerDetails: PlayerPage;
 }
@@ -35,14 +44,35 @@ function PlayerCard({ playerDetails }: PlayerCardProps) {
             {playerDetails.date_joined} to {playerDetails.contract_end}
             {""}
           </p>
-          <div className="flex flex-col">
-            <p className="my-1">GP = {playerDetails.curr_gp}</p>
-            <p className="my-1">
-              G/A = {playerDetails.curr_ga} ({playerDetails.curr_goals}G{" "}
-              {playerDetails.curr_assists}A)
-            </p>
-          </div>
         </CardTitle>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>GP</TableHead>
+              <TableHead>GA</TableHead>
+              <TableHead>G</TableHead>
+              <TableHead>A</TableHead>
+              <TableHead>ST</TableHead>
+              <TableHead>ON</TableHead>
+              <TableHead>OFF</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>{playerDetails.curr_gp}</TableCell>
+              <TableCell>{playerDetails.curr_ga}</TableCell>
+              <TableCell>{playerDetails.curr_goals}</TableCell>
+              <TableCell>{playerDetails.curr_assists}</TableCell>
+
+              <TableCell>
+                {playerDetails.curr_gp - playerDetails.curr_subon}
+              </TableCell>
+              <TableCell>{playerDetails.curr_suboff}</TableCell>
+              <TableCell>{playerDetails.curr_suboff}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </CardHeader>
     </Card>
   );

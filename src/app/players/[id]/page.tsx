@@ -1,4 +1,5 @@
 import PlayerCard from "@/components/custom/player/PlayerCard";
+import TransferCard from "@/components/custom/player/TransfersCard";
 import Image from "next/image";
 
 export interface PlayerPage {
@@ -34,6 +35,7 @@ interface ApiResponse {
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;
   const url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/players/${id}`;
+  const transf_url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/players/${id}/transfers`;
 
   try {
     const response = await fetch(url, {
@@ -59,7 +61,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
     return (
       <div className="min-h-screen flex flex-col items-center p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-mono)] ">
-        <h1 className="text-3xl font-bold my-4 p-3">
+        <h1 className="text-3xl font-bold my-4 p-3 ">
           {playerData.player_name}
           <div className="flex space-x-2">
             {playerData.nation1_url ? (
@@ -94,6 +96,10 @@ export default async function Page({ params }: { params: { id: string } }) {
         </h1>
 
         <PlayerCard playerDetails={playerData} />
+
+        <div className="bg-slate-200 dark:bg-stone-900 border rounded-lg mt-5 p-1 min-w-fit ">
+          <TransferCard api_url={transf_url} />
+        </div>
       </div>
     );
   } catch (error) {

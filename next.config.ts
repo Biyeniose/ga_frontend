@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   devIndicators: false,
   images: {
-    domains: ["a.espncdn.com"], // Add ESPN CDN to allowed domains
+    domains: ["a.espncdn.com", "tmssl.akamaized.net"], // Add ESPN CDN to allowed domains
   },
 };
 

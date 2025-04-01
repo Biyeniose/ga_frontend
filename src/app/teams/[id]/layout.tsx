@@ -62,7 +62,7 @@ export default async function DashboardLayout({
             <Link
               href={`/teams/${teamData ? teamData.team_id : ""}/allplayers`}
             >
-              Current Players
+              Players
             </Link>
           </Button>
 

@@ -50,26 +50,25 @@ function PlayerCard({ playerDetails }: PlayerCardProps) {
           <TableHeader>
             <TableRow>
               <TableHead>GP</TableHead>
-              <TableHead>GA</TableHead>
-              <TableHead>G</TableHead>
-              <TableHead>A</TableHead>
               <TableHead>ST</TableHead>
               <TableHead>ON</TableHead>
               <TableHead>OFF</TableHead>
+              <TableHead>GA</TableHead>
+              <TableHead>G</TableHead>
+              <TableHead>A</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
               <TableCell>{playerDetails.curr_gp}</TableCell>
-              <TableCell>{playerDetails.curr_ga}</TableCell>
-              <TableCell>{playerDetails.curr_goals}</TableCell>
-              <TableCell>{playerDetails.curr_assists}</TableCell>
-
               <TableCell>
                 {playerDetails.curr_gp - playerDetails.curr_subon}
               </TableCell>
+              <TableCell>{playerDetails.curr_subon}</TableCell>
               <TableCell>{playerDetails.curr_suboff}</TableCell>
-              <TableCell>{playerDetails.curr_suboff}</TableCell>
+              <TableCell>{playerDetails.curr_ga}</TableCell>
+              <TableCell>{playerDetails.curr_goals}</TableCell>
+              <TableCell>{playerDetails.curr_assists}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

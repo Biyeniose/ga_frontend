@@ -71,7 +71,7 @@ const TopNations: React.FC<MyComponentProps> = ({ api_url }) => {
     );
 
   return (
-    <div className="flex flex-col border border-gray-300 rounded-md p-4 text-sm">
+    <div className="flex flex-col border border-gray-300 p-4 text-sm">
       <h1 className="flex justify-center">Top Nations</h1>
 
       {players.map((player) => (

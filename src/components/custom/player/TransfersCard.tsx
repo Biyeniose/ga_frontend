@@ -74,6 +74,7 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
     "CF You",
     "Jgd",
     "Jgd.",
+    "Jugend",
   ];
 
   useEffect(() => {
@@ -130,19 +131,19 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
     <Table className="w-full min-w-fit mx-auto overflow-x-auto p-4">
       <TableHeader className="max-w-[40px]">
         <TableRow>
-          <TableHead className="text-white-50 text-sm md:text-base max-w-[130px]">
+          <TableHead className="text-white-50 text-sm md:text-sm max-w-[130px]">
             From
           </TableHead>
-          <TableHead className="text-white-50 text-sm md:text-base max-w-[130px]">
+          <TableHead className="text-white-50 text-sm md:text-sm max-w-[130px]">
             To
           </TableHead>
-          <TableHead className="text-white-50 text-sm md:text-base ">
+          <TableHead className="text-white-50 text-sm md:text-sm ">
             Fee
           </TableHead>
-          <TableHead className="text-white-50 text-sm md:text-base ">
+          <TableHead className="text-white-50 text-sm md:text-sm">
             Season
           </TableHead>
-          <TableHead className="text-white-50 text-sm md:text-base  hidden sm:table-cell">
+          <TableHead className="text-white-50 text-sm md:text-sm hidden sm:table-cell">
             Value
           </TableHead>
         </TableRow>
@@ -153,7 +154,7 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
           .map((transfer) => {
             return (
               <TableRow key={transfer.transfer_id}>
-                <TableCell className="font-small p-2 text-sm md:text-base truncate max-w-[130px] whitespace-normal break-words">
+                <TableCell className="font-small p-2 text-sm md:text-sm truncate max-w-[130px] whitespace-normal break-words">
                   <div className="flex flex-col gap-1">
                     <div>
                       {isLinkable(transfer.from_team_name) ? (
@@ -173,7 +174,7 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
                       {transfer.from_team_url && (
                         <Image
                           src={transfer.from_team_url}
-                          alt={transfer.from_team_name}
+                          alt={transfer.from_team_name[0]}
                           width={28}
                           height={15}
                         />
@@ -190,7 +191,7 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
                   </div>
                 </TableCell>
 
-                <TableCell className="font-small p-2 text-sm md:text-base truncate max-w-[130px] whitespace-normal break-words">
+                <TableCell className="font-small p-2 text-sm md:text-sm truncate max-w-[130px] whitespace-normal break-words">
                   <div className="flex flex-col gap-1">
                     <div>
                       {isLinkable(transfer.to_team_name) ? (
@@ -222,7 +223,7 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
                       {transfer.to_team_url && (
                         <Image
                           src={transfer.to_team_url}
-                          alt={transfer.to_team_name}
+                          alt={transfer.to_team_name[0]}
                           width={28}
                           height={15}
                         />
@@ -239,13 +240,13 @@ const TransferCard: React.FC<TransferCardProp> = ({ api_url }) => {
                   </div>
                 </TableCell>
 
-                <TableCell className="p-2 text-sm md:text-md ">
+                <TableCell className="p-2 text-sm md:text-sm ">
                   {formatNumber(transfer.fee)}
                 </TableCell>
-                <TableCell className="p-2 text-sm md:text-base ">
+                <TableCell className="p-2 text-sm md:text-sm ">
                   {transfer.season}
                 </TableCell>
-                <TableCell className="p-2 text-sm md:text-base  hidden sm:table-cell">
+                <TableCell className="p-2 text-sm md:text-sm  hidden sm:table-cell">
                   {formatNumber(transfer.value)}
                 </TableCell>
               </TableRow>

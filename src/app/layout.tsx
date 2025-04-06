@@ -8,6 +8,14 @@ import {
   Open_Sans,
   Montserrat,
   Raleway,
+  Work_Sans, //
+  Inter,
+  Barlow,
+  Inria_Sans,
+  IBM_Plex_Sans,
+  IBM_Plex_Mono, //
+  Manrope,
+  //Rubik,
 } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
@@ -16,6 +24,12 @@ import Navbar from "@/components/custom/Navbar";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const roboto = IBM_Plex_Mono({
+  variable: "--font-fira-sans",
+  subsets: ["latin"],
+  weight: "500",
 });
 
 const montserrat = Montserrat({
@@ -75,7 +89,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${openSans.variable} ${lato.variable} ${nunito.variable} ${ubuntu.variable} ${sourceCodePro.variable} ${raleway.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${openSans.variable} ${lato.variable} ${nunito.variable} ${ubuntu.variable} ${sourceCodePro.variable} ${roboto.variable} ${raleway.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

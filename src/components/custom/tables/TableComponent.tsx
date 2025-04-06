@@ -83,7 +83,7 @@ const TableComponent: React.FC<MyComponentProps> = ({ api_url }) => {
     );
 
   return (
-    <Table>
+    <Table className="w-82">
       <TableCaption>Top G/A All Competitions</TableCaption>
       <TableHeader>
         <TableRow>

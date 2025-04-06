@@ -1,18 +1,53 @@
 //import { TableComponent } from "@/components/custom/tables/TableComponent";
-import TableComponent from "@/components/custom/tables/TableComponent";
+import { TopPerformances } from "@/components/custom/player/TopPerformances";
+import MostGA from "@/components/custom/tables/MostGA";
 
 export default function Home() {
-  const url =
-    "https://c1ac-142-188-229-219.ngrok-free.app/v1/players/most_ga/topleagues";
+  const most_ga_url =
+    "https://c1ac-142-188-229-219.ngrok-free.app/v1/stats/most_ga";
+  const most_goals_url =
+    "https://c1ac-142-188-229-219.ngrok-free.app/v1/stats/most_goals";
+
+  const most_assists_url =
+    "https://c1ac-142-188-229-219.ngrok-free.app/v1/stats/most_assists";
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-sans)]">
-      <main className="top-0 flex flex-col items-center space-y-2 py-4">
-        <h1 className="text-3xl font-bold">Goal Archive</h1>
-        <div className="font-[family-name:var(--font-geist-mono)]">
-          <TableComponent api_url={url} />
+    <div className="font-[family-name:var(--font-fira-sans)] min-h-screen  text-black dark:text-white py-8 px-2">
+      {/* Row above the grid */}
+
+      <div className="w-full py-4 text-center bg-zinc-100 dark:bg-zinc-800 rounded-md mb-4 mt-10">
+        <p className="text-2xl font-text">Standout Performances</p>
+      </div>
+      <div className="flex justify-center items-center">
+        <TopPerformances />
+      </div>
+      <div className="w-full py-4 text-center bg-zinc-100 dark:bg-zinc-800 rounded-md mb-4 mt-10">
+        <p className="text-2xl font-text">Stats Leaders All Leagues</p>
+      </div>
+
+      {/* Grid container */}
+      <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:grid-cols-1">
+        <div className="w-full my-7 px-4 max-w-98 flex flex-col items-center pb-4">
+          {/* First Table (MostGA) */}
+          <div className="bg-zinc-100 dark:bg-zinc-800 rounded-md shadow-md max-w-82 ">
+            <MostGA url={most_ga_url} stat="G+A" />
+          </div>
         </div>
-      </main>
+
+        <div className=" my-7 px-4 max-w-98 flex flex-col items-center w-full  pb-4">
+          {/* First Table (MostGA) */}
+          <div className="bg-zinc-100 dark:bg-zinc-800 rounded-md shadow-md max-w-82 ">
+            <MostGA url={most_goals_url} stat="Goals" />
+          </div>
+        </div>
+
+        <div className=" my-7 px-4 max-w-98 flex flex-col items-center w-full  pb-4">
+          {/* First Table (MostGA) */}
+          <div className="bg-zinc-100 dark:bg-zinc-800 rounded-md shadow-md max-w-82 ">
+            <MostGA url={most_assists_url} stat="Assists" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -42,14 +42,14 @@ export default async function TeamsPage({
     if (!teamData) {
       console.log(apiResponse.data);
       return (
-        <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-mono)] ">
+        <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-ibm-plex)] ">
           Team not found.
         </div>
       );
     }
 
     return (
-      <div className="min-h-screen flex flex-col md:flex-row p-8 pb-20 sm:p-20 px-8 pt-10 pb-14 font-[family-name:var(--font-geist-mono)] items-center justify-center">
+      <div className="min-h-screen flex flex-col md:flex-row p-8 pb-20 sm:p-20 px-8 pt-10 pb-14 font-[family-name:var(--font-ibm-plex)] items-center justify-center">
         <main className="flex flex-col md:flex-row items-start justify-center md:space-x-4 space-y-4">
           <TopNations api_url={url_nations} />
           <MostGA api_url={url_ga} />

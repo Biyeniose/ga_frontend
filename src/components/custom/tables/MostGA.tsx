@@ -8,15 +8,7 @@ import {
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 const queryClient = new QueryClient();
 
@@ -41,18 +33,17 @@ interface PlayerStats {
 
 interface MostGAProps {
   url: string;
-  stat: string;
 }
 
-export default function MostGA({ url, stat }: MostGAProps) {
+export default function MostGA({ url }: MostGAProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Example url={url} stat={stat} />
+      <Example url={url} />
     </QueryClientProvider>
   );
 }
 
-function Example({ url, stat }: { url: string; stat: string }) {
+function Example({ url }: { url: string }) {
   const { isPending, error, data } = useQuery<PlayerStats[]>({
     queryKey: ["TopGA", url],
     queryFn: () =>
@@ -73,25 +64,11 @@ function Example({ url, stat }: { url: string; stat: string }) {
   if (error) return "An error has occurred: " + error.message;
 
   return (
-    <Table className="w-82">
-      <TableCaption>Highest {stat} All Comps</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-45 text-center text-black dark:text-white">
-            Player{" "}
-          </TableHead>
-          <TableHead className="flex justify-content items-center mx-1 px-1 text-center pl-[14px] max-w-15 text-black dark:text-white">
-            G/A
-          </TableHead>
-          <TableHead className="max-w-10 text-black dark:text-white">
-            GP
-          </TableHead>
-        </TableRow>
-      </TableHeader>
+    <Table className="w-65">
       <TableBody>
         {data.map((player) => (
           <TableRow key={player.player_id}>
-            <TableCell className="font-small max-w-70">
+            <TableCell className="font-small max-w-80">
               <div className="gap-1">
                 <div>
                   {player.nation1_url ? (
@@ -138,14 +115,13 @@ function Example({ url, stat }: { url: string; stat: string }) {
                 </div>
               </div>
             </TableCell>
-            <TableCell className="flex flex-col items-center justify-center pt-7 max-w-15">
+            <TableCell className="flex flex-col items-center justify-center pt-4 ">
               {player.ga}
-              <br />
               <span>
                 {player.goals}/{player.assists}
               </span>
+              <span>{player.gp} GP</span>
             </TableCell>
-            <TableCell className="w-10">{player.gp}</TableCell>
           </TableRow>
         ))}
       </TableBody>

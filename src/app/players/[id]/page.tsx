@@ -1,3 +1,4 @@
+import RandTransfer from "@/components/custom/other/RandTransfer";
 import PlayerCard from "@/components/custom/player/PlayerCard";
 import TransferCard from "@/components/custom/player/TransfersCard";
 import Image from "next/image";
@@ -60,7 +61,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     }
 
     return (
-      <div className="min-h-screen flex flex-col items-center p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-fira-sans)] ">
+      <div className="min-h-screen flex flex-col items-center p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-ibm-plex)] text-sm md:text-base">
         <h1 className="text-3xl font-bold my-4 p-3 ">
           {playerData.player_name}
           <div className="flex space-x-2">
@@ -96,6 +97,9 @@ export default async function Page({ params }: { params: { id: string } }) {
         </h1>
 
         <PlayerCard playerDetails={playerData} />
+        <div>
+          <RandTransfer />
+        </div>
 
         <div className="bg-slate-200 dark:bg-stone-900 border rounded-lg mt-5 p-1 min-w-fit ">
           <TransferCard api_url={transf_url} />

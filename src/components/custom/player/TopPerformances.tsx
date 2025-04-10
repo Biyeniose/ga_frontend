@@ -8,25 +8,24 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import TopPerfCard from "./TopPerfCard";
 
 export function TopPerformances() {
   return (
-    <Carousel className="w-full max-w-xs">
+    <Carousel className="flex w-full">
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem className="" key={index}>
             <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-rectangle items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
+              <CardContent className="flex aspect-rectangle items-center justify-center p-2">
+                <TopPerfCard />
+              </CardContent>
             </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white rounded-full p-2 z-10 cursor-pointer" />
+      <CarouselNext className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white rounded-full p-2 z-10 cursor-pointer" />
     </Carousel>
   );
 }

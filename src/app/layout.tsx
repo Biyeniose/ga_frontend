@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {
-  Source_Code_Pro,
+  Source_Code_Pro, //
   Ubuntu,
-  Nunito,
   Lato,
-  Open_Sans,
-  Montserrat,
-  Raleway,
-  Work_Sans, //
-  Inter,
-  Barlow,
-  Inria_Sans,
-  IBM_Plex_Sans,
-  IBM_Plex_Mono, //
-  Manrope,
+  Open_Sans, // //
+  Work_Sans, // //
+  Inter, //
+  Roboto,
+  Inria_Sans, // //
+  IBM_Plex_Sans, // //
+  IBM_Plex_Mono, // //
+  Poppins, // //
+  Plus_Jakarta_Sans, //
+  DM_Sans, // //
+  Rubik, // //
+  Fira_Code,
+  Golos_Text, // //
+  Radio_Canada, // //
+  Meera_Inimai,
   //Rubik,
 } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -26,31 +30,28 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const roboto = IBM_Plex_Mono({
-  variable: "--font-fira-sans",
+const roboto = Inter({
+  variable: "--font-ibm-plex",
   subsets: ["latin"],
-  weight: "500",
+  weight: "400",
 });
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+const montserrat = Work_Sans({
+  variable: "--font-worksans",
   subsets: ["latin"],
+  weight: "300",
 });
 
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
+const openSans = Fira_Code({
+  variable: "--font-fira",
   subsets: ["latin"],
+  weight: "300",
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-});
-
-const lato = Lato({
+const lato = Inter({
   variable: "--font-lato",
   subsets: ["latin"],
-  weight: "100",
+  weight: "300",
 });
 
 const ubuntu = Ubuntu({
@@ -67,12 +68,7 @@ const sourceCodePro = Source_Code_Pro({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-const raleway = Raleway({
-  weight: ["700"],
-  subsets: ["latin"],
-  variable: "--font-raleway",
+  weight: ["500"],
 });
 
 export const metadata: Metadata = {
@@ -89,7 +85,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${openSans.variable} ${lato.variable} ${nunito.variable} ${ubuntu.variable} ${sourceCodePro.variable} ${roboto.variable} ${raleway.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${openSans.variable} ${lato.variable} ${ubuntu.variable} ${sourceCodePro.variable} ${roboto.variable}  antialiased`}
       >
         <ThemeProvider
           attribute="class"

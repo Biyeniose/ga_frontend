@@ -6,7 +6,7 @@ export default function CompsPage() {
       <div className="top-0 flex flex-col items-center space-y-1 py-4">
         <h1 className="text-3xl font-bold">Competitions Page</h1>
 
-        <div className="font-[family-name:var(--font-geist-mono)] py-6">
+        <div className="font-[family-name:var(--font-geist-mono)] py-6 ">
           <TopLeaguesList />
         </div>
       </div>

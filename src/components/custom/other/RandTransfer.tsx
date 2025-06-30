@@ -42,7 +42,7 @@ export default function RandTransfer() {
 }
 
 function Example() {
-  const url = "https://c1ac-142-188-229-219.ngrok-free.app/v1/players/tr/rand";
+  const url = "https://67fb-142-188-76-246.ngrok-free.app/v1/players/tr/rand";
 
   const { isPending, error, data } = useQuery<TransferInfo>({
     // Changed to a single TransferInfo object

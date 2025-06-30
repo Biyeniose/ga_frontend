@@ -1,53 +1,38 @@
-import LeagueRanking from "@/components/custom/leagues/LeagueRanking";
-
-interface LeaguePage {
-  league_name: string;
-  league_id: number;
-  country: string;
-  type: string;
-}
-
-interface ApiResponse {
-  data: LeaguePage[]; // The API returns an array of PlayerPage objects in the "data" field
-}
+import { LeagueMatches } from "@/components/custom/leagues/LeagueMatches";
+import { LeagueStandings } from "@/components/custom/leagues/LeagueStandings";
+import LeagueTopStats from "@/components/custom/leagues/LeagueTopStats";
+import { LeagueInfoProvider } from "@/context/LeagueDataContext";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;
-  //const url =  `https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/${id}/rank`;
-  const url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/${id}`;
+  const leagueId = Number(id);
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-    });
+  // add api request that contains:
+  // league info
+  // full league table with gf ga w l d
+  // most recent games
+  // leads to matches page
+  // lowest goals conceded and most scored
+  // same for over past 3 seasons
+  // All time highest GA in a season --> leads to
+  // All time page
+  // recent transfers
+  // goes to transfers page
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch player data: ${response.status}`);
-    }
+  return (
+    <div className="min-h-screen p-2 sm:p-2 m-6 border-3 rounded-lg font-[family-name:var(--font-ibm-plex)]">
+      <LeagueInfoProvider leagueId={leagueId}>
+        <LeagueMatches />
 
-    const apiResponse: ApiResponse = await response.json(); // Parse the entire API response
-    const leagueData = apiResponse.data[0]; // Access the first (and likely only) player object in the array
-
-    if (!leagueData) {
-      return <div>League not found.</div>; // Handle the case where no player is found
-    }
-
-    return (
-      <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-sans)]">
-        <h1 className="text-3xl font-bold my-4">{leagueData.league_name}</h1>
-        <p>Type: {leagueData.type}</p>
-        <p>Country: {leagueData.country}</p>
-        <div className="font-[family-name:var(--font-geist-mono)]">
-          <LeagueRanking
-            api_url={`https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/${leagueData.league_id}/rank`}
-          />
+        {/* Grid for the two LeagueStandings components */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <LeagueStandings sort_type="goalsConceded" />
+          <LeagueStandings sort_type="goalsFor" />
         </div>
-      </div>
-    );
-  } catch (error) {
-    console.error(error);
-    return <div>Error loading league data.</div>;
-  }
+
+        <LeagueTopStats league_id={id} />
+        <LeagueStandings sort_type="default" />
+      </LeagueInfoProvider>
+    </div>
+  );
 }

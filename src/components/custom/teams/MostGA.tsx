@@ -5,6 +5,9 @@ import * as React from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { Trophy, Users, Clock, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Table,
@@ -15,20 +18,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface Player {
-  player_id: string;
-  player_name: string; // Corrected type
+interface PlayerStats {
+  player_id: number;
+  season_year: number;
+  player_name: string;
   age: number;
-  position: string; // Corrected type
-  curr_gp: number;
-  curr_ga: number;
-  curr_goals: number; // Corrected type
-  curr_assists: number;
-  curr_minutes: number;
+  team_name: string;
+  ga: number;
+  goals: number;
+  assists: number;
+  penalty_goals: number;
+  gp: number;
+  minutes: number;
+  position: string;
+  team_id: number;
+  team_logo: string;
+  nation1_id: number;
+  nation2_id: number;
   nation1: string;
-  nation2?: string | null;
-  nation1_url: string | null; // Allow null
-  nation2_url?: string | null; // Allow null
+  nation2: string;
+  nation1_url: string;
+  nation2_url: string | null;
+  stats_id: number;
 }
 
 interface MyComponentProps {
@@ -36,7 +47,7 @@ interface MyComponentProps {
 }
 
 const MostGA: React.FC<MyComponentProps> = ({ api_url }) => {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<PlayerStats[]>([]);
   const [loading, setLoading] = useState(true);
   const isFetchCalled = useRef(false);
 
@@ -67,8 +78,8 @@ const MostGA: React.FC<MyComponentProps> = ({ api_url }) => {
         }
 
         const data = await response.json();
-        if (data && data.data) {
-          setPlayers(data.data);
+        if (data && data) {
+          setPlayers(data);
         } else {
           setPlayers([]); // Set empty array if data is missing.
         }
@@ -88,65 +99,124 @@ const MostGA: React.FC<MyComponentProps> = ({ api_url }) => {
       </>
     );
 
-  return (
-    <div className="flex flex-col border border-gray-300 p-4">
-      <h1 className="flex justify-center">Most G+A</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Player</TableHead>
-            <TableHead className="text-red-500">G/A</TableHead>
-            <TableHead>G</TableHead>
-            <TableHead>A</TableHead>
-            <TableHead>GP</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {players.map((player) => (
-            <TableRow key={player.player_id}>
-              <TableCell className="font-small">
-                <div className="flex flex-col gap-1">
-                  <div>
-                    <Link
-                      href={`/players/${player.player_id}`}
-                      className="hover:underline hover:underline-offset-4"
-                    >
-                      {player.player_name}
-                    </Link>
-                    {""} ({player.age})
-                    <br />
-                    {player.position}
-                  </div>
+  const getRankBadgeVariant = (
+    rank: number,
+  ): "default" | "secondary" | "outline" => {
+    switch (rank) {
+      case 1:
+        return "default";
+      case 2:
+        return "secondary";
+      case 3:
+        return "outline";
+      default:
+        return "outline";
+    }
+  };
 
-                  <div className="flex gap-1">
-                    {player.nation1_url && (
-                      <Image
-                        src={player.nation1_url}
-                        alt={player.nation1}
-                        width={28}
-                        height={15}
-                      />
-                    )}
-                    {player.nation2_url && (
-                      <Image
-                        src={player.nation2_url}
-                        alt={player.nation2 ?? "Nation 2"}
-                        width={28}
-                        height={15}
-                      />
-                    )}
+  return (
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-3 text-2xl">
+          <Trophy className="h-8 w-8 text-yellow-500" />
+          <span>Top Goal Scorers</span>
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="space-y-2">
+        {players.map((player, index) => (
+          <Card
+            key={player.stats_id}
+            className="transition-all duration-200 hover:shadow-md hover:bg-muted/20 border-l-4 border-l-primary"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-start space-x-4">
+                  {/* Rank Badge */}
+                  <Badge
+                    variant={getRankBadgeVariant(index + 1)}
+                    className="h-10 w-10 rounded-full flex items-center justify-center text-base font-bold p-0"
+                  >
+                    {index + 1}
+                  </Badge>
+
+                  {/* Player Info */}
+                  <div className="flex-1 space-y-2">
+                    <h3 className="font-semibold text-lg leading-tight">
+                      {player.player_name}
+                    </h3>
+
+                    {/* Nation Flags */}
+                    <div className="flex items-center space-x-2">
+                      {player.nation1_url && (
+                        <Image
+                          src={player.nation1_url}
+                          alt={player.nation1}
+                          width={24}
+                          height={16}
+                          className="object-cover rounded border shadow-sm"
+                          title={player.nation1}
+                        />
+                      )}
+                      {player.nation2_url && (
+                        <Image
+                          src={player.nation2_url}
+                          alt={player.nation2}
+                          width={24}
+                          height={16}
+                          className="object-cover rounded border shadow-sm"
+                          title={player.nation2}
+                        />
+                      )}
+                    </div>
+
+                    {/* Position */}
+                    <div className="text-sm font-medium text-muted-foreground">
+                      {player.position}
+                    </div>
+
+                    {/* Additional Stats */}
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                      <div className="flex items-center space-x-1">
+                        <Users className="h-3 w-3" />
+                        <span>{player.team_name}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-3 w-3" />
+                        <span>{player.gp} GP</span>
+                      </div>
+                      {player.assists > 0 && (
+                        <span className="font-medium">
+                          {player.assists} assists
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </TableCell>
-              <TableCell className="text-red-500">{player.curr_ga}</TableCell>
-              <TableCell>{player.curr_goals}</TableCell>
-              <TableCell>{player.curr_assists}</TableCell>
-              <TableCell>{player.curr_gp}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+
+                {/* Goals */}
+                <div className="text-right">
+                  <div className="text-4xl font-bold text-primary">
+                    {player.goals}
+                  </div>
+                  <div className="text-sm text-muted-foreground font-medium">
+                    goals
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {players.length === 0 && !loading && (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              No player data available
+            </CardContent>
+          </Card>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

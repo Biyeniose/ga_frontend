@@ -1,64 +1,51 @@
-import MostGA from "@/components/custom/teams/MostGA";
-import MostMin from "@/components/custom/teams/MostMin";
-import TopNations from "@/components/custom/teams/TopNations";
+"use client";
 
-export interface TeamPage {
-  team_name: string;
-  team_name2: string;
-  team_id: number;
-  logo_url: string;
-  league_id: number;
-}
+import { useParams } from "next/navigation";
+import { usePlayerStats } from "@/hooks/teamRoutes";
+import TeamStatsCard from "@/components/custom/teams/team_page/TeamStatsCard";
+import { TeamTransfersSection } from "@/components/custom/teams/team_page/TeamTransfersSection";
+import { TeamMatchesSection } from "@/components/custom/teams/team_page/TeamMatchesSection";
 
-interface ApiResponse {
-  data: TeamPage | null;
-}
+export default function TeamsPage() {
+  const params = useParams();
+  const teamId = params.id;
 
-export default async function TeamsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = await params;
-  const url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}`;
-  const url_ga = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}/most_ga`;
-  const url_min = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}/most_min`;
-  const url_nations = `https://c1ac-142-188-229-219.ngrok-free.app/v1/teams/${id}/top_nations`;
+  const { data, isLoading, error } = usePlayerStats(teamId as string);
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-    });
+  if (!teamId) return <div>Team ID is required</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data || data.length === 0) return <div>No player data found</div>;
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch team data: ${response.status}`);
-    }
-
-    const apiResponse: ApiResponse = await response.json();
-    const teamData = apiResponse.data;
-
-    if (!teamData) {
-      console.log(apiResponse.data);
-      return (
-        <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-ibm-plex)] ">
-          Team not found.
+  return (
+    <div className="min-h-screen mx-6 mt-3 p-4 bg-zinc-100 dark:bg-zinc-950 rounded-lg font-[family-name:var(--font-opensans)]">
+      {/* Main Grid Container */}
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Column 1: Team Transfers (will take full width on small/medium, then 1/3 on large) */}
+        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-lg shadow-sm">
+          <TeamMatchesSection />
         </div>
-      );
-    }
 
-    return (
-      <div className="min-h-screen flex flex-col md:flex-row p-8 pb-20 sm:p-20 px-8 pt-10 pb-14 font-[family-name:var(--font-ibm-plex)] items-center justify-center">
-        <main className="flex flex-col md:flex-row items-start justify-center md:space-x-4 space-y-4">
-          <TopNations api_url={url_nations} />
-          <MostGA api_url={url_ga} />
-          <MostMin api_url={url_min} />
-        </main>
+        {/* Column 2: Stats Cards (will take full width on small, then 1/2 on medium, then 1/3 on large) */}
+        {/* This single div now holds both stats cards and ensures they stack on small screens */}
+        <div className="flex flex-col gap-6">
+          {" "}
+          {/* Using flex-col and gap to stack children */}
+          <div className="bg-zinc-100 dark:bg-zinc-950 rounded-lg shadow-sm">
+            <TeamStatsCard stat="ga" isLeague={false} />
+          </div>
+          <div className="bg-zinc-100 dark:bg-zinc-950 rounded-lg shadow-sm">
+            <TeamStatsCard stat="minutes" isLeague={false} />
+          </div>
+        </div>
+
+        {/* Column 3: You can add another column here if needed for lg:grid-cols-3,
+          or simply let the previous "stats cards" column take up the space
+          based on your responsive needs. For example, if you want a third *different* stat card: */}
+        <div className="bg-zinc-100 dark:bg-zinc-950 rounded-lg shadow-sm">
+          <TeamTransfersSection />
+        </div>
       </div>
-    );
-  } catch (error) {
-    console.error(error);
-    return <div>Error loading player data.</div>;
-  }
+    </div>
+  );
 }

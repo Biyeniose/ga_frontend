@@ -29,6 +29,7 @@ interface PlayerStats {
   goals: number;
   assists: number;
   gp: number;
+  stats_id: number;
 }
 
 interface MostGAProps {
@@ -67,7 +68,7 @@ function Example({ url }: { url: string }) {
     <Table className="w-65">
       <TableBody>
         {data.map((player) => (
-          <TableRow key={player.player_id}>
+          <TableRow key={player.stats_id}>
             <TableCell className="font-small max-w-80">
               <div className="gap-1">
                 <div>

@@ -5,9 +5,9 @@ import TableComponent from "@/components/custom/tables/TableComponent";
 
 export default function StatsPage() {
   const url =
-    "https://c1ac-142-188-229-219.ngrok-free.app/v1/players/most_ga/topleagues?max_age=23";
+    "https://67fb-142-188-76-246.ngrok-free.app/v1/players/most_ga/topleagues?max_age=23";
   const nation = "Senegal";
-  const nation_url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/leagues/2/nation2?nation=${nation}`;
+  const nation_url = `https://67fb-142-188-76-246.ngrok-free.app/v1/leagues/2/nation2?nation=${nation}`;
 
   return (
     <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-sans)]">

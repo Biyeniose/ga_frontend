@@ -1,113 +1,44 @@
-import RandTransfer from "@/components/custom/other/RandTransfer";
-import PlayerCard from "@/components/custom/player/PlayerCard";
-import TransferCard from "@/components/custom/player/TransfersCard";
-import Image from "next/image";
+"use client"; // Add this at the very top
+//import Image from "next/image";
+import { useContext } from "react";
+import { DataContext } from "@/context/PlayerPageDataContext";
+import { PlayerGoalsCarousel } from "@/components/custom/player/playerPage/PlayerGoalsCarousel";
+import { PlayerTransfers } from "@/components/custom/player/playerPage/PlayerTransfers";
+import { PlayerStats } from "@/components/custom/player/playerPage/PlayerStats";
 
-export interface PlayerPage {
-  player_name: string;
-  player_id: number;
-  team_name: string;
-  team_name2: string;
-  logo_url: string;
-  curr_team_id: number;
-  age: number;
-  position: string;
-  dob: string;
-  nation1: string;
-  nation2?: string | null;
-  nation1_url: string;
-  nation2_url?: string | null;
-  market_value: number;
-  date_joined: string;
-  contract_end: string;
-  curr_ga: number;
-  curr_goals: number;
-  curr_assists: number;
-  curr_gp: number;
-  curr_subon: number;
-  curr_suboff: number;
-  foot: string;
-}
+export default function PlayerPage() {
+  const { playerData, isLoading, error } = useContext(DataContext);
 
-interface ApiResponse {
-  data: PlayerPage | null;
-}
+  if (isLoading) return <div className="p-6">Loading player data...</div>;
+  if (error)
+    return <div className="p-6 text-red-500">Error: {error.message}</div>;
+  if (!playerData) return <div className="p-6">Player not found</div>;
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const { id } = await params;
-  const url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/players/${id}`;
-  const transf_url = `https://c1ac-142-188-229-219.ngrok-free.app/v1/players/${id}/transfers`;
+  return (
+    <div className="space-y-6">
+      {/* Goals Carousel Section */}
+      {playerData.goal_data && playerData.goal_data.length > 0 && (
+        <section className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-bold mb-4">Recent Goals & Assists</h2>
+          <PlayerGoalsCarousel goal_data={playerData.goal_data} />
+        </section>
+      )}
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-    });
+      {/* Stats Section */}
+      {playerData.stats && playerData.stats.length > 0 && (
+        <section className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm p-6">
+          <PlayerStats stats={playerData.stats} />
+        </section>
+      )}
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch player data: ${response.status}`);
-    }
+      {/* Transfers Section */}
+      {playerData.transfers && playerData.transfers.length > 0 && (
+        <section className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm p-6">
+          <PlayerTransfers transfers={playerData.transfers} />
+        </section>
+      )}
 
-    const apiResponse: ApiResponse = await response.json();
-    const playerData = apiResponse.data;
-
-    if (!playerData) {
-      return (
-        <div className="min-h-screen p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-geist-fira-sans)] ">
-          Player not found.
-        </div>
-      );
-    }
-
-    return (
-      <div className="min-h-screen flex flex-col items-center p-8 pb-20 sm:p-20 px-8 pt-20 pb-14 font-[family-name:var(--font-ibm-plex)] text-sm md:text-base">
-        <h1 className="text-3xl font-bold my-4 p-3 ">
-          {playerData.player_name}
-          <div className="flex space-x-2">
-            {playerData.nation1_url ? (
-              <Image
-                src={playerData.nation1_url}
-                alt={playerData.nation1}
-                width={40}
-                height={35}
-              />
-            ) : null}
-            {playerData.nation2 && playerData.nation2_url ? (
-              <Image
-                src={playerData.nation2_url}
-                alt={playerData.nation2}
-                width={40}
-                height={35}
-              />
-            ) : null}
-          </div>
-          <p className="text-base font-normal">
-            {new Intl.NumberFormat("en-GB", {
-              style: "currency",
-              currency: "EUR",
-            }).format(playerData.market_value)}
-          </p>
-          <p className="text-base font-normal">
-            {playerData.age} yo ({playerData.dob})
-          </p>
-          <p className="text-base font-normal">
-            {playerData.position} - {playerData.foot}
-          </p>
-        </h1>
-
-        <PlayerCard playerDetails={playerData} />
-        <div>
-          <RandTransfer />
-        </div>
-
-        <div className="bg-slate-200 dark:bg-stone-900 border rounded-lg mt-5 p-1 min-w-fit ">
-          <TransferCard api_url={transf_url} />
-        </div>
-      </div>
-    );
-  } catch (error) {
-    console.error(error);
-    return <div className="text-red-500">Error loading player data.</div>;
-  }
+      {/* Additional sections can be added here */}
+    </div>
+  );
 }

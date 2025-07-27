@@ -3,6 +3,7 @@
 import { useContext } from "react";
 import { DataContext } from "@/context/PlayerPageDataContext";
 import Image from "next/image";
+import Link from "next/link";
 import { GoalDist } from "@/types/PlayerTypes";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,7 +16,7 @@ import { Bar, BarChart, XAxis, YAxis } from "recharts";
 const chartConfig = {
   gaAgainst: {
     label: "Goals + Assists",
-    color: "#ffffff", // Changed to white
+    color: "#3b82f6",
   },
 } satisfies ChartConfig;
 
@@ -60,13 +61,11 @@ const PlayerGADist = () => {
     );
   }
 
-  const goalDists = gaDistData.goal_dist;
   const totalStats = gaDistData.total;
   const info = gaDistData.info;
-  const pens = gaDistData.pens;
 
-  // Transform and sort data for the chart
-  const chartData = goalDists
+  // Transform data for the chart
+  const chartData = gaDistData.goal_dist
     .map((item: GoalDist) => ({
       teamId: item.teams.team.team_id,
       teamName: item.teams.team.team_name,
@@ -76,11 +75,13 @@ const PlayerGADist = () => {
       assistsAgainst: item.teams.stats.assists_against ?? 0,
       gaAgainstPct: item.teams.stats.ga_against_pct ?? 0,
     }))
+    .filter((item) => item.gaAgainst > 0)
     .sort((a, b) => b.gaAgainst - a.gaAgainst)
     .slice(0, 10);
 
   return (
-    <div className="bg-black border border-gray-700 rounded-lg p-6 w-full">
+    <div className="bg-black border border-gray-700 rounded-lg p-4 w-full">
+      {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-white mb-4">
           Goals + Assists Distribution
@@ -98,146 +99,129 @@ const PlayerGADist = () => {
           <Badge className="bg-yellow-900/30 text-yellow-400 border border-yellow-700">
             Assists: {totalStats?.assists ?? 0}
           </Badge>
-          <Badge className="bg-red-900/30 text-red-400 border border-red-700">
-            Pens: {pens?.pens_scored ?? 0}
-          </Badge>
+          {gaDistData?.pens?.pens_scored && (
+            <Badge className="bg-orange-900/30 text-orange-400 border border-orange-700">
+              Penalties: {gaDistData.pens.pens_scored}
+            </Badge>
+          )}
         </div>
       </div>
 
-      {/* Horizontal Bar Chart shifted left */}
-      <div className="ml-[-20px]">
-        {" "}
-        {/* Shift the whole chart left */}
-        <ChartContainer config={chartConfig} className="h-[500px] w-full">
-          <BarChart
-            layout="vertical"
-            data={chartData}
-            margin={{
-              left: 40, // Reduced left margin
-              right: 20,
-              top: 20,
-              bottom: 60,
-            }}
-          >
-            <YAxis
-              type="category"
-              dataKey="teamName"
-              tick={false}
-              axisLine={false}
-              tickLine={false}
-              width={0} // Reduced to 0 since we're using logos inside bars
-            />
-            <XAxis
-              type="number"
-              domain={[0, "dataMax"]}
-              tick={{ fontSize: 12, fill: "#ffffff" }}
-              axisLine={{ stroke: "#ffffff" }}
-              tickLine={{ stroke: "#ffffff" }}
-              label={{
-                value: "Goals + Assists",
-                position: "insideBottom",
-                offset: -10,
-                style: { fill: "#ffffff" },
-              }}
-            />
-            <ChartTooltip
-              cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
-              content={({ active, payload }) => {
-                if (!active || !payload || !payload[0]) return null;
-
-                const data = payload[0].payload;
-                return (
-                  <div className="bg-black border border-gray-600 rounded-lg shadow-lg p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      {data.teamLogo && (
-                        <div className="relative w-6 h-6">
-                          <Image
-                            src={data.teamLogo}
-                            alt={data.teamName}
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
-                      )}
-                      <span className="font-medium text-white">
-                        {data.teamName}
+      {/* Vertical Bar Chart */}
+      <ChartContainer config={chartConfig} className="w-full h-100">
+        <BarChart
+          data={chartData}
+          margin={{ top: 60, right: 1, left: -18, bottom: 20 }}
+        >
+          <XAxis
+            dataKey="teamName"
+            angle={-55}
+            textAnchor="end"
+            height={80}
+            tick={{ fontSize: 11, fill: "#ffffff" }}
+            axisLine={{ stroke: "#ffffff" }}
+            tickLine={{ stroke: "#ffffff" }}
+          />
+          <YAxis
+            tick={{ fontSize: 11, fill: "#ffffff" }}
+            axisLine={{ stroke: "#ffffff" }}
+            tickLine={{ stroke: "#ffffff" }}
+          />
+          <ChartTooltip
+            cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
+            content={({ active, payload }) => {
+              if (!active || !payload || !payload[0]) return null;
+              const data = payload[0].payload;
+              return (
+                <div className="bg-black border border-gray-600 rounded-lg shadow-lg p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="relative w-6 h-6">
+                      <Image
+                        src={data.teamLogo}
+                        alt={data.teamName}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <span className="font-medium text-white">
+                      {data.teamName}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-300 space-y-1">
+                    <div>
+                      Total G+A:{" "}
+                      <span className="text-blue-400 font-medium">
+                        {data.gaAgainst}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-300 space-y-1">
-                      <div>
-                        Total G+A:{" "}
-                        <span className="text-white font-medium">
-                          {data.gaAgainst}
-                        </span>
-                      </div>
-                      <div>
-                        Goals:{" "}
-                        <span className="text-green-400 font-medium">
-                          {data.goalsAgainst}
-                        </span>
-                      </div>
-                      <div>
-                        Assists:{" "}
-                        <span className="text-blue-400 font-medium">
-                          {data.assistsAgainst}
-                        </span>
-                      </div>
-                      <div>
-                        Percentage:{" "}
-                        <span className="text-yellow-400 font-medium">
-                          {data.gaAgainstPct.toFixed(1)}%
-                        </span>
-                      </div>
+                    <div>
+                      Goals:{" "}
+                      <span className="text-green-400 font-medium">
+                        {data.goalsAgainst}
+                      </span>
+                    </div>
+                    <div>
+                      Assists:{" "}
+                      <span className="text-yellow-400 font-medium">
+                        {data.assistsAgainst}
+                      </span>
+                    </div>
+                    <div>
+                      Percentage:{" "}
+                      <span className="text-purple-400 font-medium">
+                        {data.gaAgainstPct.toFixed(1)}%
+                      </span>
                     </div>
                   </div>
-                );
-              }}
-            />
-            <Bar
-              dataKey="gaAgainst"
-              fill="#ffffff" // White bars
-              radius={[0, 4, 4, 0]}
-              stroke="#ffffff" // White border
-              strokeWidth={1}
-              shape={(props) => {
-                const { x, y, width, height, payload } = props;
-                return (
-                  <g>
-                    <rect
-                      x={x}
-                      y={y}
-                      width={width}
-                      height={height}
-                      fill="#ffffff"
-                      stroke="#ffffff"
-                      strokeWidth={1}
-                      rx={4}
-                      ry={4}
-                    />
-                    {payload.teamLogo && (
-                      <foreignObject
-                        x={x + 8}
-                        y={y + height / 2 - 12}
-                        width={24}
-                        height={24}
-                      >
-                        <div className="relative w-6 h-6">
-                          <Image
-                            src={payload.teamLogo}
-                            alt=""
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
-                      </foreignObject>
-                    )}
-                  </g>
-                );
-              }}
-            />
-          </BarChart>
-        </ChartContainer>
-      </div>
+                </div>
+              );
+            }}
+          />
+          <Bar
+            dataKey="gaAgainst"
+            fill="#3b82f6"
+            radius={[4, 4, 0, 0]}
+            stroke="#1e40af"
+            strokeWidth={1}
+            shape={(props) => {
+              const { x, y, width, height, payload } = props;
+              return (
+                <g>
+                  {/* Regular bar */}
+                  <rect
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    fill="#3b82f6"
+                    stroke="#1e40af"
+                    strokeWidth={1}
+                    rx={4}
+                    ry={4}
+                  />
+                  {/* Team logo at top of bar */}
+                  <foreignObject
+                    x={x + width / 2 - 20}
+                    y={y - 50}
+                    width="40"
+                    height="40"
+                  >
+                    <div className="flex items-center justify-center w-9 h-9 bg-white rounded-full p-1">
+                      <Image
+                        src={payload.teamLogo}
+                        alt={payload.teamName}
+                        width={25}
+                        height={25}
+                        className="object-contain"
+                      />
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            }}
+          />
+        </BarChart>
+      </ChartContainer>
     </div>
   );
 };

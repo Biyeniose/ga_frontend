@@ -3,24 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import {
   Source_Code_Pro, //
   Ubuntu,
-  Lato,
-  Open_Sans, // //
-  Work_Sans, // //
   Inter, //
-  Roboto,
-  Inria_Sans, // //
-  IBM_Plex_Sans, // //
   IBM_Plex_Mono, // // //
-  Poppins, // //
-  Plus_Jakarta_Sans, //
-  DM_Sans, // //
-  Rubik, // //
   Fira_Code,
-  Golos_Text, // // //
-  Radio_Canada, // //
-  Meera_Inimai,
-  Roboto_Serif,
-  Hind,
+
   //Rubik,
 } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";

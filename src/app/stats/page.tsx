@@ -1,5 +1,4 @@
 import { BDorCard } from "@/components/custom/bdor/BDorCard";
-import Naion2Table from "@/components/custom/leagues/Nation2Table";
 import { NationsCard } from "@/components/custom/nations/NationsCard";
 import TableComponent from "@/components/custom/tables/TableComponent";
 
@@ -20,7 +19,7 @@ export default function StatsPage() {
         <BDorCard />
 
         <div className="font-[family-name:var(--font-geist-mono)]">
-          <Naion2Table api_url={nation_url} />
+          {" "}
           <TableComponent api_url={url} />
         </div>
       </div>

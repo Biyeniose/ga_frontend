@@ -7,18 +7,6 @@ export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;
   const leagueId = Number(id);
 
-  // add api request that contains:
-  // league info
-  // full league table with gf ga w l d
-  // most recent games
-  // leads to matches page
-  // lowest goals conceded and most scored
-  // same for over past 3 seasons
-  // All time highest GA in a season --> leads to
-  // All time page
-  // recent transfers
-  // goes to transfers page
-
   return (
     <div className="min-h-screen p-2 sm:p-2 m-6 border-3 rounded-lg font-[family-name:var(--font-ibm-plex)]">
       <LeagueInfoProvider leagueId={leagueId}>

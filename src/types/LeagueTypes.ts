@@ -1,4 +1,6 @@
 // types/LeagueTypes.ts
+import { Team } from "./TeamTypes";
+
 export interface TeamRank {
   rank: string;
   team_id: number;
@@ -94,4 +96,43 @@ export interface LeagueDataItem {
 // Complete API response structure
 export interface LeagueInfoResponse {
   data: LeagueDataItem[]; // The 'data' property holds an array of LeagueDataContent
+}
+
+// new types
+export interface WinTeam {
+  team: Team;
+  rank: number;
+  round: string;
+  points: number;
+  season: number;
+  rank_id: number;
+}
+
+export interface Competition {
+  comp_id: number;
+  league_name: string;
+  country_id: number;
+  country: string;
+  league_logo: string;
+  type: string;
+  country_url: string;
+}
+
+export interface Stat {
+  comp: Competition;
+  win_teams: WinTeam[];
+}
+
+export interface TopCompWinners {
+  stats: Stat[];
+}
+
+export interface TopCompWinnersResponse {
+  data: TopCompWinners;
+}
+
+export interface Comp {
+  comp_id: number;
+  comp_name: string;
+  comp_url: string;
 }

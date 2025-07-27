@@ -2,12 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { PlayerPageDataResponse } from "@/types/PlayerTypes";
-import { API_BASE_URL } from "@/lib/constants";
+import { API_BASE_URL, NGROK_HEADERS } from "@/lib/constants";
 
 const fetchPlayerPageData = async (
   playerId: number,
 ): Promise<PlayerPageDataResponse> => {
-  const res = await fetch(`${API_BASE_URL}/v1/players/${playerId}/infos`);
+  const res = await fetch(`${API_BASE_URL}/v1/players/${playerId}/infos`, {
+    headers: NGROK_HEADERS,
+  });
   //const res = await fetch(`http://localhost:90/v1/teams/${teamId}/infos`);
   console.log(res);
 

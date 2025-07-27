@@ -2,161 +2,191 @@
 "use client";
 
 import { useContext } from "react";
-import { DataContext } from "@/context/TeamPageDataContext";
+import { TeamPageContext } from "@/context/teams/TeamPageProvider";
+import { Badge } from "@/components/ui/badge";
+import { Calendar } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Match, MatchTeamInfo } from "@/types/TeamTypes"; // Import Match and MatchTeamInfo interfaces
+import { Match } from "@/types/TeamTypes";
+import { formatDate } from "@/lib/methods";
 
 export function TeamMatchesSection() {
-  const { teamData, isLoading, error } = useContext(DataContext);
+  const { teamData, isLoading, error } = useContext(TeamPageContext);
 
-  if (isLoading) {
-    return <div className="p-4 text-center">Loading matches...</div>;
+  if (isLoading) return <div className="p-4">Loading team info...</div>;
+  if (error)
+    return <div className="p-4 text-red-500">Error: {error.message}</div>;
+  if (!teamData || !teamData.data) {
+    return <div className="p-4">Team data not found</div>;
   }
 
-  if (error) {
-    return (
-      <div className="p-4 text-center text-red-500">
-        Error loading matches: {error.message}
-      </div>
-    );
-  }
+  const matches = teamData.data.matches;
+  const currentTeamId = teamData.data.info.team_id;
+  const now = new Date();
 
-  if (!teamData || !teamData.matches || teamData.matches.length === 0) {
-    return (
-      <div className="p-4 text-center text-gray-500">
-        No recent match data available for this team.
-      </div>
-    );
-  }
+  // Separate past and upcoming matches
+  const pastMatches = matches
+    .filter((match) => new Date(match.match_info.match_date) < now)
+    .sort(
+      (a, b) =>
+        new Date(b.match_info.match_date).getTime() -
+        new Date(a.match_info.match_date).getTime(),
+    )
+    .slice(0, 5);
 
-  const matches = teamData.matches; // All matches for the team
+  const upcomingMatches = matches
+    .filter((match) => new Date(match.match_info.match_date) >= now)
+    .sort(
+      (a, b) =>
+        new Date(a.match_info.match_date).getTime() -
+        new Date(b.match_info.match_date).getTime(),
+    )
+    .slice(0, 5);
 
-  // Helper to format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+  const getMatchResult = (match: Match, teamId: number) => {
+    const isHome = match.teams.home.team.team_id === teamId;
+    const homeGoals = match.teams.home.stats.goals;
+    const awayGoals = match.teams.away.stats.goals;
+
+    if (homeGoals === null || awayGoals === null) return null;
+
+    if (homeGoals === awayGoals) return "D";
+    if ((isHome && homeGoals > awayGoals) || (!isHome && awayGoals > homeGoals))
+      return "W";
+    return "L";
   };
 
-  // Determine if the match is a win, loss, or draw for the current team
-  const getMatchOutcomeClass = (match: Match, currentTeamId: number) => {
-    if (match.result.isDraw) {
-      return "text-yellow-500"; // Draw
-    } else if (match.result.win_team === currentTeamId) {
-      return "text-green-500"; // Win
-    } else if (match.result.loss_team === currentTeamId) {
-      return "text-red-500"; // Loss
-    }
-    return "text-gray-500"; // Default
+  const MatchItem = ({ match, isPast }: { match: Match; isPast: boolean }) => {
+    const isHome = match.teams.home.team.team_id === currentTeamId;
+    const opponent = isHome ? match.teams.away.team : match.teams.home.team;
+    const currentTeamGoals = isHome
+      ? match.teams.home.stats.goals
+      : match.teams.away.stats.goals;
+    const opponentGoals = isHome
+      ? match.teams.away.stats.goals
+      : match.teams.home.stats.goals;
+    const result = getMatchResult(match, currentTeamId);
+
+    return (
+      <Link href={`/matches/${match.match_info.match_id}`}>
+        <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors gap-x-6">
+          {/* Date & Competition */}
+          <div className="flex flex-col gap-1 min-w-0 w-20">
+            <div className="text-xs text-muted-foreground flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {formatDate(match.match_info.match_date)}
+            </div>
+            <Badge variant="outline" className="text-xs w-fit">
+              {match.match_info.comp}
+            </Badge>
+          </div>
+
+          {/* Match */}
+          <div className="flex items-center gap-4 flex-1 justify-center">
+            {/* Home Team */}
+            <div className="relative w-8 h-8">
+              <Image
+                src={match.teams.home.team.logo}
+                alt={`${match.teams.home.team.team_name} logo`}
+                fill
+                className="object-contain"
+              />
+            </div>
+
+            {/* Score or Time */}
+            <div className="flex items-center gap-2 min-w-0">
+              {isPast && currentTeamGoals !== null && opponentGoals !== null ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold">
+                    {match.teams.home.stats.goals}-
+                    {match.teams.away.stats.goals}
+                  </span>
+                  {result && (
+                    <Badge
+                      variant={
+                        result === "W"
+                          ? "default"
+                          : result === "D"
+                          ? "secondary"
+                          : "destructive"
+                      }
+                      className="text-xs w-4 h-4 rounded-full p-0 flex items-center justify-center"
+                    >
+                      {result}
+                    </Badge>
+                  )}
+                </div>
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  {new Date(match.match_info.date_time_utc).toLocaleTimeString(
+                    "en-US",
+                    {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    },
+                  )}
+                </span>
+              )}
+            </div>
+
+            {/* Away Team */}
+            <div className="relative w-8 h-8">
+              <Image
+                src={match.teams.away.team.logo}
+                alt={`${match.teams.away.team.team_name} logo`}
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          {/* Home/Away indicator */}
+        </div>
+      </Link>
+    );
   };
 
   return (
-    <section className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm p-6 mb-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-        Recent Matches
-      </h2>
-      <div className="space-y-4">
-        {matches.map((match) => (
-          <div
-            key={match.match_id}
-            className="p-3 bg-zinc-900 dark:bg-zinc-850 rounded-lg shadow-md border border-zinc-700 hover:border-blue-500 transition-colors duration-200 text-sm overflow-hidden"
-          >
-            {/* CONTAINER FOR COMPETITION AND DATE/ROUND */}
-            <div className="flex text-xs mb-2 gap-x-2 items-start">
-              {/* Competition Name and Logo (Optional Link) */}
-              {match.comp_name && (
-                <div className="flex items-center gap-2 text-sm text-gray-400 mb-1">
-                  {match.comp_url && (
-                    <Image
-                      src={match.comp_url}
-                      alt={match.comp_name}
-                      width={20}
-                      height={20}
-                      className="object-contain"
-                    />
-                  )}
-                  <span className="text-xs md:hidden">{match.comp_name}</span>
-                </div>
-              )}
-
-              {/* Match Date and Round */}
-              <div className="text-gray-400">
-                <span>
-                  {formatDate(match.match_date)} - MD: {match.round}
-                </span>
-              </div>
-            </div>
-
-            {/* UPDATED MATCH SCORE LAYOUT TO MATCH IMAGE */}
-            <div className="flex items-center justify-between text-white ">
-              {/* Home Team */}
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/teams/${match.home_team.team_id || ""}`}
-                  className="hover:underline hover:underline-offset-4 text-sm"
-                >
-                  {match.home_team.team_name}
-                </Link>
-                {match.home_team.team_logo && (
-                  <div className="relative w-6 h-6 flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={match.home_team.team_logo}
-                      alt={match.home_team.team_name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Score */}
-              <div className="flex items-center gap-1 mx-2">
-                <span
-                  className={`font-bold text-base ${getMatchOutcomeClass(
-                    match,
-                    teamData?.info.team_id || 0,
-                  )}`}
-                >
-                  {match.home_team.goals}
-                </span>
-                <span className="text-gray-400">-</span>
-                <span
-                  className={`font-bold text-base ${getMatchOutcomeClass(
-                    match,
-                    teamData?.info.team_id || 0,
-                  )}`}
-                >
-                  {match.away_team.goals}
-                </span>
-              </div>
-
-              {/* Away Team */}
-              <div className="flex items-center gap-2">
-                {match.away_team.team_logo && (
-                  <div className="relative w-6 h-6 flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={match.away_team.team_logo}
-                      alt={match.away_team.team_name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                <Link
-                  href={`/teams/${match.away_team.team_id || ""}`}
-                  className="hover:underline hover:underline-offset-4 text-sm"
-                >
-                  {match.away_team.team_name}
-                </Link>
-              </div>
-            </div>
+    <div className="max-w-2xl space-y-6">
+      {/* Upcoming Matches */}
+      {upcomingMatches.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mb-3">Upcoming</h2>
+          <div className="space-y-2">
+            {upcomingMatches.map((match) => (
+              <MatchItem
+                key={match.match_info.match_id}
+                match={match}
+                isPast={false}
+              />
+            ))}
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+      )}
+
+      {/* Recent Matches */}
+      {pastMatches.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mb-3">Recent</h2>
+          <div className="space-y-2">
+            {pastMatches.map((match) => (
+              <MatchItem
+                key={match.match_info.match_id}
+                match={match}
+                isPast={true}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* No matches */}
+      {upcomingMatches.length === 0 && pastMatches.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          No matches found
+        </div>
+      )}
+    </div>
   );
 }

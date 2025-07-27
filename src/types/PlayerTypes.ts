@@ -1,6 +1,6 @@
 // Player types
-import { Transfer } from "./TeamTypes";
-
+import { Transfer, Team } from "./TeamTypes";
+import { Comp } from "./LeagueTypes";
 export interface Nations {
   nation1_id: number | null;
   nation2_id: number | null;
@@ -64,27 +64,36 @@ export interface MatchEvent {
 }
 
 export interface PlayerLatestStats {
-  comp_id: number;
-  comp_name: string;
-  comp_url: string | null;
-  player_id: number;
+  player: Player;
+  comp: Comp;
+  team: Team;
   season_year: number;
-  player_name: string;
-  age: number;
-  team_id: number;
-  team_name: string;
-  team_logo: string | null;
-  ga: number; // Goals + Assists
-  goals: number;
-  assists: number;
-  penalty_goals: number;
-  gp: number; // Games played
-  minutes: number;
-  subbed_on: number;
-  subbed_off: number;
-  yellows: number;
-  yellows2: number; // Second yellows (leading to red)
-  reds: number;
+  age?: number | null;
+  ga?: number | null; // Goals Against
+  ga_pg?: number | null; // Goals Against Per Game
+  goals?: number | null;
+  goals_pg?: number | null; // Goals Per Game
+  assists?: number | null;
+  assists_pg?: number | null; // Assists Per Game
+  penalty_goals?: number | null;
+  gp?: number | null; // Games Played
+  minutes?: number | null;
+  minutes_pg?: number | null; // Minutes Per Game
+  cs?: number | null; // Clean Sheets
+  pass_compl_pg?: number | null; // Pass Completion Per Game
+  passes_pg?: number | null; // Passes Per Game
+  errors_pg?: number | null; // Errors Per Game
+  shots_pg?: number | null; // Shots Per Game
+  shots_on_target_pg?: number | null; // Shots On Target Per Game
+  sca_pg?: number | null; // Shot Creating Actions Per Game
+  gca_pg?: number | null; // Goal Creating Actions Per Game
+  take_ons_pg?: number | null; // Take-ons Per Game
+  take_ons_won_pg?: number | null; // Take-ons Won Per Game
+  goals_concede?: number | null; // Goals Conceded
+  yellows?: number | null;
+  yellows2?: number | null; // Second Yellow Cards
+  reds?: number | null;
+  own_goals?: number | null;
   stats_id: number;
 }
 
@@ -97,4 +106,73 @@ export interface PlayerPageDataItem {
 
 export interface PlayerPageDataResponse {
   data: PlayerPageDataItem;
+}
+
+// new
+// Nation information
+export interface Nations {
+  nation1_id: number | null;
+  nation1: string | null;
+  nation1_logo: string;
+  nation2_id: number | null;
+  nation2: string | null;
+  nation2_logo: string | null;
+}
+
+// Player information
+export interface Player {
+  id: number;
+  name: string;
+  current_age: number;
+  pic_url: string;
+  nations: Nations;
+}
+
+// Player Goal Dist per Season
+export interface TotalGA {
+  goals: number;
+  assists: number;
+  ga: number; // Goal Actions or Goals + Assists
+  pens?: number | null; // Penalties (scored/taken/involved in)
+}
+
+export interface Pens {
+  pen_pct?: number | null; // Penalty Percentage
+  pens_scored?: number | null; // Penalties Scored
+}
+
+export interface StatsDist {
+  ga_against_pct?: number | null; // Goal Actions Against Percentage
+  ga_against?: number | null; // Goal Actions Against
+  goals_against?: number | null; // Goals Against
+  goals_against_pct?: number | null; // Goals Against Percentage
+  assists_against?: number | null; // Assists Against
+  assists_against_pct?: number | null; // Assists Against Percentage
+}
+
+export interface TeamDist {
+  team: Team;
+  stats: StatsDist;
+}
+
+export interface GoalDist {
+  teams: TeamDist;
+}
+
+export interface Comp2 {
+  comp_id: number;
+  comp_name: string;
+  comp_url?: string | null; // Optional string, can be string or null
+  season_year: number;
+}
+
+export interface PlayerGADistData {
+  info: Comp2;
+  total: TotalGA;
+  goal_dist: GoalDist[] | undefined;
+  pens: Pens;
+}
+
+export interface PlayerGADistResponse {
+  data: PlayerGADistData;
 }

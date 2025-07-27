@@ -15,7 +15,7 @@ export default async function PlayerPageLayout({
 
   return (
     <PlayerPageDataProvider playerId={playerId}>
-      <div className="font-[family-name:var(--font-ibm-plex)] max-w-screen-xl mx-auto px-4">
+      <div className="font-[family-name:var(--font-ibm-plex)] max-w-screen-xl mx-auto px-4 pt-8">
         <PlayerPageHeader />
         <main className="mt-6">{children}</main>
       </div>

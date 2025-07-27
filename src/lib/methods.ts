@@ -8,3 +8,10 @@ export const formatNumber = (num: number | null): string => {
   }
   return num.toString();
 };
+
+export const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+};

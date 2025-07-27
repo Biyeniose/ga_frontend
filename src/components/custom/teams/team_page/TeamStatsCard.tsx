@@ -22,6 +22,7 @@ export default function TeamStatsCard({ stat, isLeague }: StatsCardProps) {
 
   // Make a shallow copy of the stats array to avoid direct mutation
   const stats = [...teamData.stats];
+  console.log(teamData.stats);
 
   // --- Sorting Logic START ---
   stats.sort((a, b) => {

@@ -6,6 +6,7 @@ import {
   TeamPageResponse,
   TeamSeasonResponse,
   DomesticSeasonsResponse,
+  LeagueMatchesResponse,
 } from "@/types/TeamTypes";
 
 // /teams/:id/infos
@@ -71,5 +72,29 @@ export const useDomesticRanks = (teamId: number, season: number) => {
   return useQuery<DomesticSeasonsResponse>({
     queryKey: ["domesticRanks", teamId, season],
     queryFn: () => fetchDomesticRanks(teamId, season),
+  });
+};
+
+// /teams/:id/matches?season=2024
+const fetchTeamMatchesbyYear = async (
+  teamId: number,
+  season: number,
+): Promise<LeagueMatchesResponse> => {
+  const res = await fetch(
+    `${API_BASE_URL}/v1/teams/${teamId}/matches?season=${season}`,
+    {
+      headers: NGROK_HEADERS,
+    },
+  );
+  console.log(res);
+
+  if (!res.ok) throw new Error(`Failed to fetch team stats`);
+  return res.json();
+};
+
+export const useTeamMatchesbyYear = (teamId: number, season: number) => {
+  return useQuery<LeagueMatchesResponse>({
+    queryKey: ["teamMatches", teamId, season],
+    queryFn: () => fetchTeamMatchesbyYear(teamId, season),
   });
 };

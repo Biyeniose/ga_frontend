@@ -186,3 +186,12 @@ export interface TeamRank {
   goals_f: number;
   goals_a: number;
 }
+
+// teams/:id/matches?season=2024
+export interface LeagueMatches {
+  matches: Match[]; // Assuming 'Match' is an already defined interface/type
+}
+
+export interface LeagueMatchesResponse {
+  data: LeagueMatches;
+}

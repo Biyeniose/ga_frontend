@@ -19,9 +19,9 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 import { usePlayerMatches } from "@/hooks/players/playerRoutes";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface MyComponentProps {
   playerId: number;
@@ -32,6 +32,7 @@ interface ChartDataPoint {
   date: string;
   month: string;
   minutes: number;
+  ga: number;
   formattedDate: string;
   homeTeam: string;
   awayTeam: string;
@@ -42,57 +43,8 @@ interface ChartDataPoint {
   isPlaceholder?: boolean;
 }
 
-const chartConfig = {
-  minutes: {
-    label: "Minutes Played",
-    color: "#ef4444", // red-500
-  },
-} satisfies ChartConfig;
-
-// Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload as ChartDataPoint;
-
-    // Don't show tooltip for placeholder months with no matches
-    if (data.isPlaceholder && data.minutes === 0) {
-      return null;
-    }
-
-    return (
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-lg">
-        <p className="text-gray-300 text-sm mb-2">{data.formattedDate}</p>
-        {!data.isPlaceholder && (
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <img
-              src={data.homeLogo || "/default-team-logo.png"}
-              alt={data.homeTeam}
-              className="w-6 h-6"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-            <span className="text-white font-semibold">{data.result}</span>
-            <img
-              src={data.awayLogo || "/default-team-logo.png"}
-              alt={data.awayTeam}
-              className="w-6 h-6"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-          </div>
-        )}
-        <p className="text-red-400 font-medium">
-          {data.minutes} minutes played
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
 const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
+  const [viewMode, setViewMode] = React.useState<"minutes" | "ga">("minutes");
   const { data, isLoading, error } = usePlayerMatches(playerId, season);
 
   if (isLoading)
@@ -120,36 +72,34 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
 
   const matches = data.data.matches;
 
-  // Create all months from August to July of next year for x-axis
   const createSeasonMonths = (seasonYear: number) => {
     const months = [];
-    // August to December of current season year
     for (let month = 7; month <= 11; month++) {
       months.push(new Date(seasonYear, month, 1));
     }
-    // January to July of next year
     for (let month = 0; month <= 6; month++) {
       months.push(new Date(seasonYear + 1, month, 1));
     }
     return months;
   };
 
-  // Create data points for all months in the season
   const createFullSeasonData = (matches: any[], seasonYear: number) => {
     const seasonMonths = createSeasonMonths(seasonYear);
     const result: ChartDataPoint[] = [];
 
-    // First add all actual matches
     const matchData = matches
       .filter((match) => match.player_stats?.basic?.minutes !== undefined)
       .map((match) => {
         const matchDate = new Date(
           match.match_info.date_time_utc || match.match_info.match_date,
         );
+        const goals = match.player_stats?.basic?.goals || 0;
+        const assists = match.player_stats?.basic?.assists || 0;
         return {
           date: match.match_info.date_time_utc || match.match_info.match_date,
           month: matchDate.toLocaleDateString("en-US", { month: "short" }),
           minutes: match.player_stats?.basic?.minutes || 0,
+          ga: goals + assists,
           formattedDate: matchDate.toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -169,7 +119,6 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    // Then add placeholder months with 0 minutes
     seasonMonths.forEach((monthDate) => {
       const monthStr = monthDate.toLocaleDateString("en-US", {
         month: "short",
@@ -185,6 +134,7 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
           date: monthDate.toISOString(),
           month: monthStr,
           minutes: 0,
+          ga: 0,
           formattedDate: monthStr,
           homeTeam: "",
           awayTeam: "",
@@ -209,37 +159,140 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
   const averageMinutes =
     matches.length > 0 ? Math.round(totalMinutes / matches.length) : 0;
 
+  const totalGA = chartData.reduce(
+    (acc, curr) => acc + (curr.isPlaceholder ? 0 : curr.ga),
+    0,
+  );
+  const averageGA =
+    matches.length > 0 ? Math.round(totalGA / matches.length) : 0;
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload as ChartDataPoint;
+      if (data.isPlaceholder && data.minutes === 0 && data.ga === 0)
+        return null;
+
+      return (
+        <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-lg">
+          <p className="text-gray-300 text-sm mb-2">{data.formattedDate}</p>
+          {!data.isPlaceholder && (
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <img
+                src={data.homeLogo || "/default-team-logo.png"}
+                alt={data.homeTeam}
+                className="w-6 h-6"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+              <span className="text-white font-semibold">{data.result}</span>
+              <img
+                src={data.awayLogo || "/default-team-logo.png"}
+                alt={data.awayTeam}
+                className="w-6 h-6"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            </div>
+          )}
+          {viewMode === "minutes" ? (
+            <p className="text-red-400 font-medium">
+              {data.minutes} minutes played
+            </p>
+          ) : (
+            <p className="text-red-400 font-medium">
+              {data.ga} goal contributions
+            </p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <Card className="bg-black border-gray-800 text-white">
       <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
             <CardTitle className="text-white text-lg sm:text-xl">
-              Season {season} - Minutes Played
+              Season {season} - Player Performance
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Match by match minutes throughout the season
+              {viewMode === "minutes"
+                ? "Match by match minutes throughout the season"
+                : "Match by match goal contributions (goals + assists)"}
             </CardDescription>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 text-sm">
-            <div className="text-center sm:text-right">
-              <div className="text-gray-400">Total Minutes</div>
-              <div className="text-red-400 font-bold text-lg">
-                {totalMinutes.toLocaleString()}
-              </div>
-            </div>
-            <div className="text-center sm:text-right">
-              <div className="text-gray-400">Average</div>
-              <div className="text-red-400 font-bold text-lg">
-                {averageMinutes}
-              </div>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Tabs
+              value={viewMode}
+              onValueChange={(value) => setViewMode(value as "minutes" | "ga")}
+              className="w-full sm:w-auto"
+            >
+              <TabsList className="bg-gray-800">
+                <TabsTrigger
+                  value="minutes"
+                  className="data-[state=active]:bg-gray-700"
+                >
+                  Minutes
+                </TabsTrigger>
+                <TabsTrigger
+                  value="ga"
+                  className="data-[state=active]:bg-gray-700"
+                >
+                  GA
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <div className="flex flex-col sm:flex-row gap-4 text-sm">
+              {viewMode === "minutes" ? (
+                <>
+                  <div className="text-center sm:text-right">
+                    <div className="text-gray-400">Total Minutes</div>
+                    <div className="text-red-400 font-bold text-lg">
+                      {totalMinutes.toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="text-center sm:text-right">
+                    <div className="text-gray-400">Average</div>
+                    <div className="text-red-400 font-bold text-lg">
+                      {averageMinutes}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-center sm:text-right">
+                    <div className="text-gray-400">Total GA</div>
+                    <div className="text-red-400 font-bold text-lg">
+                      {totalGA.toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="text-center sm:text-right">
+                    <div className="text-gray-400">Average</div>
+                    <div className="text-red-400 font-bold text-lg">
+                      {averageGA}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       </CardHeader>
       <CardContent className="p-2 sm:p-6">
         <ChartContainer
-          config={chartConfig}
+          config={{
+            [viewMode]: {
+              label:
+                viewMode === "minutes"
+                  ? "Minutes Played"
+                  : "Goal Contributions",
+              color: "#ef4444",
+            },
+          }}
           className="aspect-auto h-[250px] sm:h-[300px] lg:h-[350px] w-full"
         >
           <ResponsiveContainer width="100%" height="100%">
@@ -254,7 +307,7 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#374151"
+                stroke="#ff0000"
                 vertical={false}
               />
               <XAxis
@@ -264,16 +317,19 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
                 axisLine={false}
                 tickMargin={8}
                 tick={{ fill: "#9CA3AF", fontSize: 9 }}
-                interval={0} // Show all months
+                interval={0}
                 type="category"
               />
               <YAxis
                 tickLine={false}
                 axisLine={false}
                 tick={{ fill: "#9CA3AF", fontSize: 12 }}
-                domain={[0, "dataMax + 10"]}
+                domain={[
+                  0,
+                  viewMode === "minutes" ? "dataMax + 10" : "dataMax + 1",
+                ]}
                 label={{
-                  value: "Minutes",
+                  value: viewMode === "minutes" ? "Minutes" : "GA",
                   angle: -90,
                   position: "insideLeft",
                   style: { textAnchor: "middle", fill: "#9CA3AF" },
@@ -281,7 +337,7 @@ const SeasonMatchesChart = ({ playerId, season }: MyComponentProps) => {
               />
               <ChartTooltip content={<CustomTooltip />} />
               <Bar
-                dataKey="minutes"
+                dataKey={viewMode}
                 fill="#ef4444"
                 radius={[2, 2, 0, 0]}
                 className="hover:opacity-80 transition-opacity"

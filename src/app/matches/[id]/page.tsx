@@ -31,8 +31,8 @@ export default function Page() {
     awayLineups.length > 0;
 
   return (
-    <div className="min-h-screen flex flex-col items-center  p-2 rounded-lg font-[family-name:var(--font-ibm-plex)]">
-      <div className="w-[95vw] sm:w-4/5 md:w-2/3 lg:w-1/2">
+    <div className="min-h-screen w-full p-2 rounded-lg font-[family-name:var(--font-ibm-plex)]">
+      <div className="w-[95vw] sm:w-4/5 lg:w-full">
         {result === null ? (
           // If result is null, show only TeamsH2H (upcoming match)
           <TeamsH2H team1Id={home_id} team2Id={away_id} />

@@ -1,6 +1,8 @@
 // Player types
 import { Transfer, Team } from "./TeamTypes";
 import { Comp } from "./LeagueTypes";
+import { MatchInfo, MatchGoals } from "./MatchTypes";
+import { PlayerMatchStatsDiv } from "./StatTypes";
 export interface Nations {
   nation1_id: number | null;
   nation2_id: number | null;
@@ -175,4 +177,66 @@ export interface PlayerGADistData {
 
 export interface PlayerGADistResponse {
   data: PlayerGADistData;
+}
+
+// players/:id/recent-ga
+export interface BasicStats {
+  id: number;
+  player_id: number;
+  match_id: number;
+  team_id: number;
+  minutes?: number;
+  goals?: number;
+  assists?: number;
+  goals_assists?: number;
+  pens_made?: number;
+  pens_att?: number;
+  age?: number;
+  shots?: number;
+  shots_on_target?: number;
+  cards_yellow?: number;
+  cards_red?: number;
+  touches?: number;
+}
+
+export interface MatchTeam {
+  stats: MatchGoals;
+  team: Team; // Assuming Team is an already defined interface/type
+}
+
+export interface MatchTeamsBasic {
+  home: MatchTeam;
+  away: MatchTeam;
+}
+
+export interface PlayerRecentGA {
+  teams: MatchTeamsBasic;
+  match_info: MatchInfo;
+  player_stats?: BasicStats;
+}
+
+export interface PlayerRecentGAData {
+  recent_ga: PlayerRecentGA[];
+}
+
+export interface PlayerRecentGAResponse {
+  data: PlayerRecentGAData;
+}
+
+// players/:id/match?season=2024
+export interface PlayerMatch {
+  xi: boolean;
+  lineup_id: number;
+  team_id: number;
+  match_info: MatchInfo; // Assuming MatchInfo is imported or defined elsewhere
+  teams: MatchTeamsBasic; // Assuming MatchTeamsBasic is imported or defined elsewhere
+  player_stats?: PlayerMatchStatsDiv; // Assuming PlayerMatchStatsDiv is imported or defined elsewhere
+}
+
+export interface PlayerMatchesData {
+  matches: PlayerMatch[];
+}
+
+export interface PlayerMatchesResponse {
+  data: PlayerMatchesData;
 }

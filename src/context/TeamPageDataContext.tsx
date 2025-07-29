@@ -2,11 +2,11 @@
 "use client";
 
 import { createContext, ReactNode } from "react";
-import { TeamPageDataItem } from "@/types/TeamTypes"; // Ensure TeamPageInfoResponse is imported
+import { TeamPageData } from "@/types/TeamTypes"; // Ensure TeamPageInfoResponse is imported
 import { useTeamPageData } from "@/hooks/teamRoutes";
 
 interface DataContextType {
-  teamData?: TeamPageDataItem;
+  teamData?: TeamPageData;
   isLoading: boolean;
   error: Error | null;
 }
@@ -26,7 +26,7 @@ export function TeamPageDataProvider({ children, teamId }: DataProviderProps) {
   // useTeamPageData now returns a Promise<TeamPageInfoResponse>
   const { data: apiResponse, isLoading, error } = useTeamPageData(teamId);
 
-  const extractedTeamData: TeamPageDataItem | undefined = apiResponse?.data;
+  const extractedTeamData: TeamPageData | undefined = apiResponse?.data;
 
   const contextValue: DataContextType = {
     teamData: extractedTeamData, // Assign the extracted content

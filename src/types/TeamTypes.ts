@@ -132,3 +132,57 @@ export interface TeamPageData {
 export interface TeamPageResponse {
   data: TeamPageData;
 }
+
+// teams/:id/comps
+export interface TeamCompRank {
+  rank?: number | null;
+  round?: string | null;
+  points?: number | null;
+  season: number;
+  team_id: number;
+  comp: Comp;
+}
+
+export interface TeamSeason {
+  ranking: TeamCompRank;
+  // If you uncomment `last_match` in your Pydantic model, uncomment it here too.
+  // last_match: Match;
+}
+
+export interface TeamSeasonData {
+  season_comps: TeamSeason[];
+  team: Team;
+}
+
+export interface TeamSeasonResponse {
+  data: TeamSeasonData;
+}
+
+// teams/:id/domestic
+export interface DomesticSeason {
+  rank: TeamRank;
+  comp: Comp; // Assuming Comp is an enum or another interface/type
+  season: number;
+}
+
+export interface DomesticSeasonsData {
+  seasons: DomesticSeason[];
+}
+
+export interface DomesticSeasonsResponse {
+  data: DomesticSeasonsData;
+}
+
+export interface TeamRank {
+  team: Team; // Assuming Team is an enum or another interface/type
+  rank: string;
+  info?: string; // Optional property
+  points: number;
+  gp: number;
+  gd: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  goals_f: number;
+  goals_a: number;
+}

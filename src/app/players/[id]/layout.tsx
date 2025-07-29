@@ -14,11 +14,11 @@ export default async function PlayerPageLayout({
   const playerId = Number(id);
 
   return (
-    <PlayerPageDataProvider playerId={playerId}>
-      <div className="font-[family-name:var(--font-ibm-plex)] max-w-screen-xl mx-auto px-4 pt-8">
+    <div className="font-[family-name:var(--font-ibm-plex)] max-w-screen-xl mx-auto px-4 pt-8">
+      <PlayerPageDataProvider playerId={playerId}>
         <PlayerPageHeader />
         <main className="mt-6">{children}</main>
-      </div>
-    </PlayerPageDataProvider>
+      </PlayerPageDataProvider>
+    </div>
   );
 }

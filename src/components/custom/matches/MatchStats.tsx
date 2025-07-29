@@ -22,10 +22,12 @@ export function MatchStats() {
     direction: "asc" | "desc";
   } | null>(null);
 
-  if (isLoading) return <div className="p-4">Loading...</div>;
+  if (isLoading) return <div className="p-4 text-xs">Loading...</div>;
   if (error)
-    return <div className="p-4 text-red-500">Error: {error.message}</div>;
-  if (!matchData?.data) return <div className="p-4">No data</div>;
+    return (
+      <div className="p-4 text-red-500 text-xs">Error: {error.message}</div>
+    );
+  if (!matchData?.data) return <div className="p-4 text-xs">No data</div>;
 
   const { home, away } = matchData.data.teams;
 
@@ -87,16 +89,16 @@ export function MatchStats() {
     const sorted = sortedPlayers(players);
 
     return (
-      <div className="relative overflow-hidden rounded-md border">
-        <div className="overflow-x-auto">
+      <div className="relative overflow-hidden rounded-md border ">
+        <div className="overflow-x-auto text-xs">
           <Table className="relative">
             <TableHeader>
               <TableRow>
-                <TableHead className="sticky left-0 z-20 min-w-[150px] border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <TableHead className="sticky left-0 z-20 min-w-[150px] border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-xs">
                   Player
                 </TableHead>
                 {showTeamColumn && (
-                  <TableHead className="min-w-[60px]">Team</TableHead>
+                  <TableHead className="min-w-[60px] text-xs">Team</TableHead>
                 )}
                 <SortableHeader
                   title="Min"
@@ -105,19 +107,19 @@ export function MatchStats() {
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Goals"
+                  title="Gls"
                   sortKey="goals"
                   sortConfig={sortConfig}
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Assists"
+                  title="Ast"
                   sortKey="assists"
                   sortConfig={sortConfig}
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Shots"
+                  title="Shts"
                   sortKey="shots"
                   sortConfig={sortConfig}
                   onSort={requestSort}
@@ -129,13 +131,13 @@ export function MatchStats() {
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Tackles"
+                  title="Tkls"
                   sortKey="tackles"
                   sortConfig={sortConfig}
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Interceptions"
+                  title="Intps"
                   sortKey="interceptions"
                   sortConfig={sortConfig}
                   onSort={requestSort}
@@ -153,13 +155,13 @@ export function MatchStats() {
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Fouls"
+                  title="Fls"
                   sortKey="fouls"
                   sortConfig={sortConfig}
                   onSort={requestSort}
                 />
                 <SortableHeader
-                  title="Cards"
+                  title="Cds"
                   sortKey="cards_yellow"
                   sortConfig={sortConfig}
                   onSort={requestSort}
@@ -169,7 +171,7 @@ export function MatchStats() {
             <TableBody>
               {sorted.map((player) => (
                 <TableRow key={player.id}>
-                  <TableCell className="sticky left-0 z-10 font-medium border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <TableCell className="sticky left-0 z-10 font-medium border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-xs">
                     <Link
                       href={`/players/${player.player.id}`}
                       className="hover:text-blue-600 transition-colors duration-200"
@@ -190,27 +192,41 @@ export function MatchStats() {
                             ? home.info.team.team_name
                             : away.info.team.team_name
                         }
-                        className="w-6 h-6 object-contain"
+                        className="w-5 h-5 object-contain"
                       />
                     </TableCell>
                   )}
-                  <TableCell>{safeStatValue(player.stats?.minutes)}</TableCell>
-                  <TableCell>{safeStatValue(player.stats?.goals)}</TableCell>
-                  <TableCell>{safeStatValue(player.stats?.assists)}</TableCell>
-                  <TableCell>{safeStatValue(player.stats?.shots)}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.minutes)}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.goals)}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.assists)}
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.shots)}
+                  </TableCell>
+                  <TableCell className="text-xs">
                     {safeStatValue(player.stats?.passes_pct, true)}
                   </TableCell>
-                  <TableCell>{safeStatValue(player.stats?.tackles)}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.tackles)}
+                  </TableCell>
+                  <TableCell className="text-xs">
                     {safeStatValue(player.stats?.interceptions)}
                   </TableCell>
-                  <TableCell>{safeStatValue(player.stats?.xg)}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.xg)}
+                  </TableCell>
+                  <TableCell className="text-xs">
                     {safeStatValue(player.stats?.xg_assist)}
                   </TableCell>
-                  <TableCell>{safeStatValue(player.stats?.fouls)}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-xs">
+                    {safeStatValue(player.stats?.fouls)}
+                  </TableCell>
+                  <TableCell className="text-xs">
                     {(player.stats?.cards_yellow ?? 0) > 0 && "🟨"}
                     {(player.stats?.cards_red ?? 0) > 0 && "🟥"}
                   </TableCell>
@@ -224,22 +240,28 @@ export function MatchStats() {
   };
 
   // Combine all players for the "both" tab - handle null lineups
-  const homeLineups = home.lineups || [];
+  const homeLineups = home.lineups || []A;
   const awayLineups = away.lineups || [];
   const allPlayers = [...homeLineups, ...awayLineups];
 
   return (
-    <div className="p-2 sm:p-4">
+    <div className="p-2 sm:p-4 text-xs">
       <Card>
         <CardHeader>
-          <CardTitle>Match Player Statistics</CardTitle>
+          <CardTitle className="text-sm">Match Player Statistics</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="home" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="home">{home.info.team.team_name}</TabsTrigger>
-              <TabsTrigger value="away">{away.info.team.team_name}</TabsTrigger>
-              <TabsTrigger value="both">Both Teams</TabsTrigger>
+              <TabsTrigger value="home" className="text-xs">
+                {home.info.team.team_name}
+              </TabsTrigger>
+              <TabsTrigger value="away" className="text-xs">
+                {away.info.team.team_name}
+              </TabsTrigger>
+              <TabsTrigger value="both" className="text-xs">
+                Both Teams
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="home" className="mt-4">
@@ -273,14 +295,16 @@ function SortableHeader({
 }) {
   return (
     <TableHead
-      className="cursor-pointer hover:bg-muted/50"
+      className="cursor-pointer hover:bg-muted/50 text-xs"
       onClick={() => onSort(sortKey)}
     >
-      <div className="flex items-center">
+      <div className="flex items-center text-xs">
         {title}
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown className="ml-2 h-3 w-3" />
         {sortConfig?.key === sortKey && (
-          <span>{sortConfig.direction === "asc" ? "↑" : "↓"}</span>
+          <span className="text-xs">
+            {sortConfig.direction === "asc" ? "↑" : "↓"}
+          </span>
         )}
       </div>
     </TableHead>

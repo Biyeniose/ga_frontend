@@ -1,11 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { TeamPlayerStats } from "@/types/TeamTypes";
-import { TeamPageInfoResponse, SquadResponse } from "@/types/TeamTypes";
+import { PlayerStats } from "@/types/TeamTypes";
+import { TeamPageResponse, TeamSeasonResponse } from "@/types/TeamTypes";
 import { API_BASE_URL } from "@/lib/constants";
 
-const fetchPlayerStats = async (teamId: string): Promise<TeamPlayerStats[]> => {
+const fetchPlayerStats = async (teamId: string): Promise<PlayerStats[]> => {
   const res = await fetch(
     `${API_BASE_URL}/v1/leagues/9999/${teamId}/stats?stat=minutes&age=64`,
   );
@@ -14,15 +14,14 @@ const fetchPlayerStats = async (teamId: string): Promise<TeamPlayerStats[]> => {
 };
 
 export const usePlayerStats = (teamId: string) => {
-  return useQuery<TeamPlayerStats[]>({
+  return useQuery<PlayerStats[]>({
     queryKey: ["playerStats", teamId],
     queryFn: () => fetchPlayerStats(teamId),
   });
 };
 
-const fetchTeamPageData = async (
-  teamId: number,
-): Promise<TeamPageInfoResponse> => {
+// /players/:id/infos
+const fetchTeamPageData = async (teamId: number): Promise<TeamPageResponse> => {
   const res = await fetch(`${API_BASE_URL}/v1/teams/${teamId}/infos`);
   //const res = await fetch(`http://localhost:90/v1/teams/${teamId}/infos`);
   console.log(res);
@@ -32,14 +31,20 @@ const fetchTeamPageData = async (
 };
 
 export const useTeamPageData = (teamId: number) => {
-  return useQuery<TeamPageInfoResponse>({
+  return useQuery<TeamPageResponse>({
     queryKey: ["teamInfo", teamId],
     queryFn: () => fetchTeamPageData(teamId),
   });
 };
 
-const fetchTeamSqaudData = async (teamId: number): Promise<SquadResponse> => {
-  const res = await fetch(`${API_BASE_URL}/v1/teams/${teamId}/squad`);
+// /players/:id/comps
+const fetchTeamSeasonRanks = async (
+  teamId: number,
+  season: number,
+): Promise<TeamSeasonResponse> => {
+  const res = await fetch(
+    `${API_BASE_URL}/v1/teams/${teamId}/comps?season=${season}`,
+  );
   //const res = await fetch(`http://localhost:90/v1/teams/${teamId}/infos`);
   console.log(res);
 
@@ -47,9 +52,9 @@ const fetchTeamSqaudData = async (teamId: number): Promise<SquadResponse> => {
   return res.json();
 };
 
-export const useTeamSquadData = (teamId: number) => {
-  return useQuery<SquadResponse>({
-    queryKey: ["teamSquad", teamId],
-    queryFn: () => fetchTeamSqaudData(teamId),
+export const useTeamSeasonRanks = (teamId: number, season: number) => {
+  return useQuery<TeamSeasonResponse>({
+    queryKey: ["teamCups", teamId, season],
+    queryFn: () => fetchTeamSeasonRanks(teamId, season),
   });
 };

@@ -76,15 +76,6 @@ export function TeamPlayerStatsSection() {
               <span className="font-medium">{player.ga || 0}</span>
               <span className="text-xs text-muted-foreground">G+A</span>
             </div>
-
-            {/* Minutes per game */}
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium">
-                {Math.round(player.minutes_pg || 0)}
-              </span>
-              <span className="text-xs text-muted-foreground">min/g</span>
-            </div>
           </div>
         </div>
       </Link>
